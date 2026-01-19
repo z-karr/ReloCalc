@@ -1,0 +1,143 @@
+import { City } from '../../types';
+import { calculateSpanishTax } from '../taxSystems/spain';
+
+// ============================================================================
+// SPANISH CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2024)
+// Tax system: Progressive national + regional tax + social security
+
+export const MADRID: City = {
+  id: 'madrid_es',
+  name: 'Madrid',
+  state: 'Community of Madrid',
+  country: 'es',
+  countryCode: 'ES',
+  latitude: 40.4168,
+  longitude: -3.7038,
+  costOfLivingIndex: 88,
+  medianRent: 1300,
+  medianRentLocal: 1196,
+  medianHomePrice: 380000,
+  medianHomePriceLocal: 349600,
+  stateTaxRate: 0.09, // Madrid regional tax (lower than average)
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 35,
+  walkScore: 88,
+  transitScore: 95,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 78,
+  educationIndex: 75,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'medium',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'large',
+};
+
+export const BARCELONA: City = {
+  id: 'barcelona_es',
+  name: 'Barcelona',
+  state: 'Catalonia',
+  country: 'es',
+  countryCode: 'ES',
+  latitude: 41.3851,
+  longitude: 2.1734,
+  costOfLivingIndex: 90,
+  medianRent: 1400,
+  medianRentLocal: 1288,
+  medianHomePrice: 420000,
+  medianHomePriceLocal: 386400,
+  stateTaxRate: 0.13, // Catalonia regional tax (higher)
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 38,
+  walkScore: 90,
+  transitScore: 92,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 77,
+  educationIndex: 76,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'medium',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'large',
+};
+
+export const VALENCIA: City = {
+  id: 'valencia_es',
+  name: 'Valencia',
+  state: 'Valencian Community',
+  country: 'es',
+  countryCode: 'ES',
+  latitude: 39.4699,
+  longitude: -0.3763,
+  costOfLivingIndex: 82,
+  medianRent: 950,
+  medianRentLocal: 874,
+  medianHomePrice: 280000,
+  medianHomePriceLocal: 257600,
+  stateTaxRate: 0.11, // Valencia regional tax
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 32,
+  walkScore: 82,
+  transitScore: 78,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 76,
+  educationIndex: 73,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'medium',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'medium',
+};
+
+export const SEVILLE: City = {
+  id: 'seville_es',
+  name: 'Seville',
+  state: 'Andalusia',
+  country: 'es',
+  countryCode: 'ES',
+  latitude: 37.3891,
+  longitude: -5.9845,
+  costOfLivingIndex: 78,
+  medianRent: 800,
+  medianRentLocal: 736,
+  medianHomePrice: 240000,
+  medianHomePriceLocal: 220800,
+  stateTaxRate: 0.12, // Andalusia regional tax
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 30,
+  walkScore: 80,
+  transitScore: 70,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 75,
+  educationIndex: 72,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'medium',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'medium',
+};
+
+export const SPAIN_CITIES: City[] = [
+  MADRID,
+  BARCELONA,
+  VALENCIA,
+  SEVILLE,
+];
