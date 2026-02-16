@@ -10,9 +10,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { Button, Card, CardHeader, CardContent, Input, CityPicker, SliderInput } from '../components';
-import { City, UserPreferences, CityRecommendation } from '../types';
+import { City, UserPreferences, CityRecommendation, Region, Country } from '../types';
 import { getTopRecommendations } from '../utils/recommendations';
 import { formatCurrency } from '../utils/taxCalculator';
+import { getAllCountries } from '../data/countries';
 
 interface RecommendationsScreenProps {
   navigation: any;
@@ -23,6 +24,9 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
   const [salary, setSalary] = useState('');
   const [showPreferences, setShowPreferences] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showRegionFilter, setShowRegionFilter] = useState(false);
+  const [showCountryFilter, setShowCountryFilter] = useState(false);
+  const [displayCount, setDisplayCount] = useState(10);
 
   const [preferences, setPreferences] = useState<Partial<UserPreferences>>({
     prioritizeCost: 5,
@@ -32,12 +36,15 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
     prioritizeEntertainment: 5,
     prioritizeHealthcare: 5,
     prioritizeEducation: 5,
+    regionFilter: 'all',
+    countryFilter: 'all',
   });
 
   // Reset results when current city or salary changes
   React.useEffect(() => {
     if (showResults) {
       setShowResults(false);
+      setDisplayCount(10);
     }
   }, [currentCity, salary]);
 
@@ -46,13 +53,22 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
     return parseInt(cleaned, 10) || 0;
   }, [salary]);
 
-  const recommendations = useMemo(() => {
+  const allRecommendations = useMemo(() => {
     if (!showResults) return [];
-    return getTopRecommendations(currentCity, parsedSalary, preferences, 10);
+    // Get all recommendations (up to a reasonable max like 50)
+    return getTopRecommendations(currentCity, parsedSalary, preferences, 50);
   }, [currentCity, parsedSalary, preferences, showResults]);
+
+  const displayedRecommendations = allRecommendations.slice(0, displayCount);
+  const hasMoreResults = displayCount < allRecommendations.length;
 
   const handleFindCities = () => {
     setShowResults(true);
+    setDisplayCount(10); // Reset to initial 10 results
+  };
+
+  const handleShowMore = () => {
+    setDisplayCount(prev => prev + 10);
   };
 
   const formatSalaryInput = (text: string) => {
@@ -64,6 +80,125 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
 
   const updatePreference = (key: keyof UserPreferences, value: number) => {
     setPreferences(prev => ({ ...prev, [key]: value }));
+  };
+
+  // Region filter management
+  const toggleRegion = (region: Region) => {
+    setPreferences(prev => {
+      const currentFilter = prev.regionFilter;
+
+      // If 'all', switch to array with just this region
+      if (currentFilter === 'all' || !currentFilter) {
+        return { ...prev, regionFilter: [region], countryFilter: 'all' }; // Reset country filter
+      }
+
+      // If array, toggle the region
+      if (Array.isArray(currentFilter)) {
+        const newFilter = currentFilter.includes(region)
+          ? currentFilter.filter(r => r !== region)
+          : [...currentFilter, region];
+
+        // If empty after removal, set to 'all' and reset country filter
+        if (newFilter.length === 0) {
+          return { ...prev, regionFilter: 'all', countryFilter: 'all' };
+        }
+
+        return { ...prev, regionFilter: newFilter, countryFilter: 'all' }; // Reset country filter on change
+      }
+
+      return prev;
+    });
+  };
+
+  const isRegionSelected = (region: Region): boolean => {
+    const filter = preferences.regionFilter;
+    if (filter === 'all' || !filter) return true;
+    return Array.isArray(filter) && filter.includes(region);
+  };
+
+  const clearRegionFilter = () => {
+    setPreferences(prev => ({ ...prev, regionFilter: 'all', countryFilter: 'all' }));
+  };
+
+  // Country filter management
+  const toggleCountry = (countryId: string) => {
+    setPreferences(prev => {
+      const currentFilter = prev.countryFilter;
+
+      // If 'all', switch to array with just this country
+      if (currentFilter === 'all' || !currentFilter) {
+        return { ...prev, countryFilter: [countryId] };
+      }
+
+      // If array, toggle the country
+      if (Array.isArray(currentFilter)) {
+        const newFilter = currentFilter.includes(countryId)
+          ? currentFilter.filter(c => c !== countryId)
+          : [...currentFilter, countryId];
+
+        // If empty after removal, set to 'all'
+        return { ...prev, countryFilter: newFilter.length === 0 ? 'all' : newFilter };
+      }
+
+      return prev;
+    });
+  };
+
+  const isCountrySelected = (countryId: string): boolean => {
+    const filter = preferences.countryFilter;
+    if (filter === 'all' || !filter) return true;
+    return Array.isArray(filter) && filter.includes(countryId);
+  };
+
+  const clearCountryFilter = () => {
+    setPreferences(prev => ({ ...prev, countryFilter: 'all' }));
+  };
+
+  // Region labels and icons
+  const regionInfo: Record<Region, { label: string; icon: string }> = {
+    north_america: { label: 'North America', icon: 'location' },
+    europe: { label: 'Europe', icon: 'earth' },
+    asia_pacific: { label: 'Asia Pacific', icon: 'partly-sunny' },
+    latin_america: { label: 'Latin America', icon: 'leaf' },
+    middle_east: { label: 'Middle East', icon: 'moon' },
+    africa: { label: 'Africa', icon: 'sunny' },
+    oceania: { label: 'Oceania', icon: 'water' },
+  };
+
+  // Get available countries based on selected regions
+  const getAvailableCountries = (): Country[] => {
+    const regionFilter = preferences.regionFilter;
+
+    // If 'all' or no filter, don't show country filter
+    if (regionFilter === 'all' || !regionFilter) {
+      return [];
+    }
+
+    // Get all countries
+    const allCountries = getAllCountries();
+
+    // Filter by selected regions
+    if (Array.isArray(regionFilter) && regionFilter.length > 0) {
+      return allCountries.filter(country => regionFilter.includes(country.region));
+    }
+
+    return [];
+  };
+
+  const availableCountries = getAvailableCountries();
+  const shouldShowCountryFilter = availableCountries.length > 0;
+
+  // Country flag emoji mapping
+  const countryFlags: Record<string, string> = {
+    us: '🇺🇸', ca: '🇨🇦', mx: '🇲🇽',
+    gb: '🇬🇧', de: '🇩🇪', fr: '🇫🇷', es: '🇪🇸', it: '🇮🇹', pt: '🇵🇹',
+    nl: '🇳🇱', be: '🇧🇪', ie: '🇮🇪', ch: '🇨🇭', se: '🇸🇪', no: '🇳🇴',
+    dk: '🇩🇰', pl: '🇵🇱', cz: '🇨🇿', gr: '🇬🇷',
+    au: '🇦🇺', nz: '🇳🇿',
+    jp: '🇯🇵', kr: '🇰🇷', cn: '🇨🇳', sg: '🇸🇬', tw: '🇹🇼', th: '🇹🇭',
+    in: '🇮🇳', vn: '🇻🇳', id: '🇮🇩', ph: '🇵🇭',
+    ar: '🇦🇷', br: '🇧🇷', cl: '🇨🇱', cr: '🇨🇷', sv: '🇸🇻', gt: '🇬🇹',
+    ae: '🇦🇪', za: '🇿🇦', ma: '🇲🇦',
   };
 
   // Better importance scale with more granular labels
@@ -117,22 +252,160 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
 
             <TouchableOpacity
               style={styles.preferencesToggle}
+              onPress={() => setShowRegionFilter(!showRegionFilter)}
+            >
+              <View style={styles.preferencesToggleContent}>
+                <Ionicons
+                  name="earth-outline"
+                  size={20}
+                  color={COLORS.primary}
+                />
+                <Text style={styles.preferencesToggleText}>
+                  Filter by Region
+                </Text>
+                {preferences.regionFilter !== 'all' && Array.isArray(preferences.regionFilter) && preferences.regionFilter.length > 0 && (
+                  <View style={styles.filterBadge}>
+                    <Text style={styles.filterBadgeText}>{preferences.regionFilter.length}</Text>
+                  </View>
+                )}
+              </View>
+              <Ionicons
+                name={showRegionFilter ? 'chevron-up' : 'chevron-down'}
+                size={20}
+                color={COLORS.mediumGray}
+              />
+            </TouchableOpacity>
+
+            {showRegionFilter && (
+              <View style={styles.regionFilterSection}>
+                <View style={styles.regionFilterHeader}>
+                  <Text style={styles.regionFilterTitle}>Select Regions</Text>
+                  {preferences.regionFilter !== 'all' && (
+                    <TouchableOpacity onPress={clearRegionFilter}>
+                      <Text style={styles.clearFilterText}>Show All</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <View style={styles.regionChips}>
+                  {(Object.keys(regionInfo) as Region[]).map(region => {
+                    const selected = isRegionSelected(region);
+                    const allSelected = preferences.regionFilter === 'all';
+                    return (
+                      <TouchableOpacity
+                        key={region}
+                        style={[
+                          styles.regionChip,
+                          (selected && !allSelected) && styles.regionChipSelected,
+                        ]}
+                        onPress={() => toggleRegion(region)}
+                      >
+                        <Ionicons
+                          name={regionInfo[region].icon as any}
+                          size={16}
+                          color={(selected && !allSelected) ? COLORS.white : COLORS.mediumGray}
+                        />
+                        <Text
+                          style={[
+                            styles.regionChipText,
+                            (selected && !allSelected) && styles.regionChipTextSelected,
+                          ]}
+                        >
+                          {regionInfo[region].label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
+
+            {shouldShowCountryFilter && (
+              <>
+                <TouchableOpacity
+                  style={styles.preferencesToggle}
+                  onPress={() => setShowCountryFilter(!showCountryFilter)}
+                >
+                  <View style={styles.preferencesToggleContent}>
+                    <Ionicons
+                      name="flag-outline"
+                      size={20}
+                      color={COLORS.primary}
+                    />
+                    <Text style={styles.preferencesToggleText}>
+                      Filter by Country
+                    </Text>
+                    {preferences.countryFilter !== 'all' && Array.isArray(preferences.countryFilter) && preferences.countryFilter.length > 0 && (
+                      <View style={styles.filterBadge}>
+                        <Text style={styles.filterBadgeText}>{preferences.countryFilter.length}</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Ionicons
+                    name={showCountryFilter ? 'chevron-up' : 'chevron-down'}
+                    size={20}
+                    color={COLORS.mediumGray}
+                  />
+                </TouchableOpacity>
+
+                {showCountryFilter && (
+                  <View style={styles.regionFilterSection}>
+                    <View style={styles.regionFilterHeader}>
+                      <Text style={styles.regionFilterTitle}>Select Countries</Text>
+                      {preferences.countryFilter !== 'all' && (
+                        <TouchableOpacity onPress={clearCountryFilter}>
+                          <Text style={styles.clearFilterText}>Show All</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <View style={styles.regionChips}>
+                      {availableCountries.map(country => {
+                        const selected = isCountrySelected(country.id);
+                        const allSelected = preferences.countryFilter === 'all';
+                        return (
+                          <TouchableOpacity
+                            key={country.id}
+                            style={[
+                              styles.regionChip,
+                              (selected && !allSelected) && styles.regionChipSelected,
+                            ]}
+                            onPress={() => toggleCountry(country.id)}
+                          >
+                            <Text style={styles.countryFlag}>{countryFlags[country.id] || '🏳️'}</Text>
+                            <Text
+                              style={[
+                                styles.regionChipText,
+                                (selected && !allSelected) && styles.regionChipTextSelected,
+                              ]}
+                            >
+                              {country.name}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  </View>
+                )}
+              </>
+            )}
+
+            <TouchableOpacity
+              style={styles.preferencesToggle}
               onPress={() => setShowPreferences(!showPreferences)}
             >
               <View style={styles.preferencesToggleContent}>
-                <Ionicons 
-                  name="options-outline" 
-                  size={20} 
-                  color={COLORS.primary} 
+                <Ionicons
+                  name="options-outline"
+                  size={20}
+                  color={COLORS.primary}
                 />
                 <Text style={styles.preferencesToggleText}>
                   Customize Preferences
                 </Text>
               </View>
-              <Ionicons 
-                name={showPreferences ? 'chevron-up' : 'chevron-down'} 
-                size={20} 
-                color={COLORS.mediumGray} 
+              <Ionicons
+                name={showPreferences ? 'chevron-up' : 'chevron-down'}
+                size={20}
+                color={COLORS.mediumGray}
               />
             </TouchableOpacity>
 
@@ -221,11 +494,16 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
         </Card>
 
         {/* Results */}
-        {showResults && recommendations.length > 0 && (
+        {showResults && allRecommendations.length > 0 && (
           <View style={styles.resultsSection}>
-            <Text style={styles.resultsTitle}>Top Recommendations</Text>
+            <View style={styles.resultsHeader}>
+              <Text style={styles.resultsTitle}>Top Recommendations</Text>
+              <Text style={styles.resultsCount}>
+                Showing {displayedRecommendations.length} of {allRecommendations.length}
+              </Text>
+            </View>
 
-            {recommendations.map((rec, index) => (
+            {displayedRecommendations.map((rec, index) => (
               <RecommendationCard
                 key={rec.city.id}
                 recommendation={rec}
@@ -233,11 +511,22 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
                 showSalary={parsedSalary > 0}
               />
             ))}
+
+            {hasMoreResults && (
+              <View style={styles.showMoreContainer}>
+                <Button
+                  title="Show 10 More Cities"
+                  onPress={handleShowMore}
+                  variant="secondary"
+                  fullWidth
+                />
+              </View>
+            )}
           </View>
         )}
 
         {/* No results message */}
-        {showResults && recommendations.length === 0 && (
+        {showResults && allRecommendations.length === 0 && (
           <Card style={styles.inputCard}>
             <CardContent>
               <Text style={styles.noResultsText}>
@@ -389,14 +678,29 @@ const styles = StyleSheet.create({
   resultsSection: {
     marginTop: SPACING.sm,
   },
+  resultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+    marginLeft: SPACING.xs,
+    marginRight: SPACING.xs,
+  },
   resultsTitle: {
     fontSize: FONTS.sizes.xs,
     fontWeight: '700',
     color: COLORS.mediumGray,
     textTransform: 'uppercase',
     letterSpacing: 1.5,
+  },
+  resultsCount: {
+    fontSize: FONTS.sizes.xs,
+    fontWeight: '600',
+    color: COLORS.primary,
+  },
+  showMoreContainer: {
+    marginTop: SPACING.md,
     marginBottom: SPACING.md,
-    marginLeft: SPACING.xs,
   },
   recCard: {
     marginBottom: SPACING.md,
@@ -535,5 +839,73 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: SPACING.xxl,
+  },
+  filterBadge: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 6,
+    marginLeft: SPACING.xs,
+  },
+  filterBadgeText: {
+    fontSize: FONTS.sizes.xs,
+    fontWeight: '700',
+    color: COLORS.white,
+  },
+  regionFilterSection: {
+    marginTop: SPACING.base,
+    paddingTop: SPACING.base,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.lightGray,
+  },
+  regionFilterHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+  },
+  regionFilterTitle: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '600',
+    color: COLORS.charcoal,
+  },
+  clearFilterText: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '600',
+    color: COLORS.primary,
+  },
+  regionChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.sm,
+  },
+  regionChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    backgroundColor: COLORS.offWhite,
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+    borderColor: COLORS.lightGray,
+  },
+  regionChipSelected: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  regionChipText: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '500',
+    color: COLORS.mediumGray,
+  },
+  regionChipTextSelected: {
+    color: COLORS.white,
+  },
+  countryFlag: {
+    fontSize: 16,
   },
 });

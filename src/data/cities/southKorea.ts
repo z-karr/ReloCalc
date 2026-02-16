@@ -3,18 +3,24 @@ import { City } from '../../types';
 // ============================================================================
 // SOUTH KOREAN CITIES
 // ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national income tax + social security
 
 export const SEOUL: City = {
   id: 'seoul',
   name: 'Seoul',
+  state: 'Seoul Capital Area',
   country: 'kr',
   countryCode: 'KR',
   latitude: 37.5665,
   longitude: 126.9780,
   population: 9700000,
-  costOfLivingIndex: 90,
-  medianRent: 1600,
-  medianHomePrice: 550000,
+  costOfLivingIndex: 82, // Updated Jan 2026 (Numbeo: 82.1)
+  medianRent: 1700,
+  medianRentLocal: 2210000, // ~1300 KRW/USD
+  medianHomePrice: 580000,
+  medianHomePriceLocal: 754000000,
+  stateTaxRate: 0,
   transitScore: 95,
   walkScore: 85,
   climate: 'continental',
@@ -39,14 +45,18 @@ export const SEOUL: City = {
 export const BUSAN: City = {
   id: 'busan',
   name: 'Busan',
+  state: 'Gyeongsang',
   country: 'kr',
   countryCode: 'KR',
   latitude: 35.1796,
   longitude: 129.0756,
   population: 3400000,
-  costOfLivingIndex: 75,
-  medianRent: 1100,
-  medianHomePrice: 350000,
+  costOfLivingIndex: 68, // Updated Jan 2026 (Numbeo: 68.3)
+  medianRent: 1150,
+  medianRentLocal: 1495000,
+  medianHomePrice: 370000,
+  medianHomePriceLocal: 481000000,
+  stateTaxRate: 0,
   transitScore: 85,
   walkScore: 75,
   climate: 'temperate',
@@ -71,14 +81,18 @@ export const BUSAN: City = {
 export const JEJU: City = {
   id: 'jeju',
   name: 'Jeju',
+  state: 'Jeju Island',
   country: 'kr',
   countryCode: 'KR',
   latitude: 33.4996,
   longitude: 126.5312,
   population: 670000,
-  costOfLivingIndex: 78,
-  medianRent: 1200,
-  medianHomePrice: 380000,
+  costOfLivingIndex: 70, // Updated Jan 2026 (Numbeo: 70.2)
+  medianRent: 1250,
+  medianRentLocal: 1625000,
+  medianHomePrice: 400000,
+  medianHomePriceLocal: 520000000,
+  stateTaxRate: 0,
   transitScore: 50,
   walkScore: 55,
   climate: 'temperate',

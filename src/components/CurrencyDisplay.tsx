@@ -93,6 +93,15 @@ export const CurrencyDisplay: React.FC<CurrencyDisplayProps> = ({
     const formattedHome = `${homeSymbol}${amountHome.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
     const formattedDest = `${targetCurrency.symbol}${amountDest.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
+    // If home currency and target currency are the same, only show once
+    if (preferences.homeCurrency === targetCurrency.code) {
+      return (
+        <Text style={[styles.primaryAmount, style]}>
+          {formattedHome}
+        </Text>
+      );
+    }
+
     return (
       <View style={styles.container}>
         <Text style={[styles.primaryAmount, style]}>

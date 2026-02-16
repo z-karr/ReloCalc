@@ -3,18 +3,24 @@ import { City } from '../../types';
 // ============================================================================
 // SINGAPORE (CITY-STATE)
 // ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive income tax + CPF (Central Provident Fund)
 
 export const SINGAPORE: City = {
   id: 'singapore',
   name: 'Singapore',
+  state: 'Singapore',
   country: 'sg',
   countryCode: 'SG',
   latitude: 1.3521,
   longitude: 103.8198,
   population: 5900000,
-  costOfLivingIndex: 92,
-  medianRent: 2800,
-  medianHomePrice: 950000,
+  costOfLivingIndex: 88, // Updated Jan 2026 (Numbeo: 88.4)
+  medianRent: 2900,
+  medianRentLocal: 3885, // ~1.34 SGD/USD
+  medianHomePrice: 980000,
+  medianHomePriceLocal: 1313200,
+  stateTaxRate: 0,
   transitScore: 88,
   walkScore: 82,
   climate: 'tropical',

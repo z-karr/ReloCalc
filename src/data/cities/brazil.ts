@@ -1,18 +1,24 @@
 import { City } from '../../types';
 
+// ============================================================================
+// BRAZILIAN CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const SAO_PAULO: City = {
   id: 'sao_paulo_br',
   name: 'São Paulo',
   state: 'São Paulo',
   country: 'br',
   countryCode: 'BR',
-  costOfLivingIndex: 62,
+  costOfLivingIndex: 48, // Updated Jan 2026 (Numbeo: 47.8)
   latitude: -23.5505,
   longitude: -46.6333,
-  medianRent: 650,
-  medianRentLocal: 3230,
-  medianHomePrice: 180000,
-  medianHomePriceLocal: 894600,
+  medianRent: 710,
+  medianRentLocal: 3527,
+  medianHomePrice: 196000,
+  medianHomePriceLocal: 974720,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const RIO_DE_JANEIRO: City = {
   countryCode: 'BR',
   latitude: -22.9068,
   longitude: -43.1729,
-  costOfLivingIndex: 58,
-  medianRent: 600,
-  medianRentLocal: 2982,
-  medianHomePrice: 160000,
-  medianHomePriceLocal: 795200,
+  costOfLivingIndex: 46, // Updated Jan 2026 (Numbeo: 45.5)
+  medianRent: 655,
+  medianRentLocal: 3255,
+  medianHomePrice: 174000,
+  medianHomePriceLocal: 864960,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const BRASILIA: City = {
   countryCode: 'BR',
   latitude: -15.8267,
   longitude: -47.9218,
-  costOfLivingIndex: 55,
-  medianRent: 550,
-  medianRentLocal: 2733,
-  medianHomePrice: 150000,
-  medianHomePriceLocal: 745500,
+  costOfLivingIndex: 44, // Updated Jan 2026 (Numbeo: 43.7)
+  medianRent: 600,
+  medianRentLocal: 2982,
+  medianHomePrice: 163000,
+  medianHomePriceLocal: 810646,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const BRASILIA: City = {
   expatCommunitySize: 'medium',
 };
 
+export const BELO_HORIZONTE: City = {
+  id: 'belo_horizonte_br',
+  name: 'Belo Horizonte',
+  state: 'Minas Gerais',
+  country: 'br',
+  countryCode: 'BR',
+  latitude: -19.9167,
+  longitude: -43.9345,
+  costOfLivingIndex: 42, // Updated Jan 2026 (Numbeo: 42.1)
+  medianRent: 550,
+  medianRentLocal: 2733,
+  medianHomePrice: 148000,
+  medianHomePriceLocal: 735552,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 62,
+  walkScore: 70,
+  transitScore: 70,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 64,
+  educationIndex: 67,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'high',
+  timeZoneOffset: -3,
+  expatCommunitySize: 'medium',
+};
+
 export const BRAZIL_CITIES: City[] = [
   SAO_PAULO,
   RIO_DE_JANEIRO,
   BRASILIA,
+  BELO_HORIZONTE,
 ];

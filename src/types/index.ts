@@ -10,7 +10,8 @@ export type Region =
   | 'asia_pacific'
   | 'latin_america'
   | 'middle_east'
-  | 'africa';
+  | 'africa'
+  | 'oceania';
 
 export type LanguageBarrier = 'none' | 'low' | 'medium' | 'high';
 
@@ -147,6 +148,10 @@ export interface UserPreferences {
   homeCurrency: string;          // Currency code ('USD', 'GBP', 'EUR')
   currencyDisplayMode: 'home_first' | 'usd_first';  // Display preference
   autoDetected: boolean;         // Whether values were auto-detected
+
+  // Regional filtering (for recommendations)
+  regionFilter?: Region[] | 'all';  // Array of regions to include, or 'all' for no filter
+  countryFilter?: string[] | 'all';  // Array of country codes to include, or 'all' for no filter
 }
 
 export interface SalaryCalculation {

@@ -13,9 +13,9 @@ export const TOKYO: City = {
   latitude: 35.6762,
   longitude: 139.6503,
   population: 14000000,
-  costOfLivingIndex: 105,
-  medianRent: 2500,
-  medianHomePrice: 650000,
+  costOfLivingIndex: 75, // Updated Jan 2026 - weak yen makes Tokyo affordable
+  medianRent: 2000, // Updated Jan 2026 - lower due to yen weakness
+  medianHomePrice: 550000, // Updated Jan 2026
   transitScore: 95,
   walkScore: 85,
   climate: 'temperate',
@@ -46,9 +46,9 @@ export const OSAKA: City = {
   latitude: 34.6937,
   longitude: 135.5023,
   population: 2700000,
-  costOfLivingIndex: 95,
-  medianRent: 1800,
-  medianHomePrice: 450000,
+  costOfLivingIndex: 68, // Updated Jan 2026 - weak yen effect
+  medianRent: 1500, // Updated Jan 2026
+  medianHomePrice: 380000, // Updated Jan 2026
   transitScore: 90,
   walkScore: 82,
   climate: 'temperate',
@@ -79,9 +79,9 @@ export const KYOTO: City = {
   latitude: 35.0116,
   longitude: 135.7681,
   population: 1500000,
-  costOfLivingIndex: 88,
-  medianRent: 1600,
-  medianHomePrice: 420000,
+  costOfLivingIndex: 63, // Updated Jan 2026 - weak yen effect
+  medianRent: 1300, // Updated Jan 2026
+  medianHomePrice: 350000, // Updated Jan 2026
   transitScore: 85,
   walkScore: 80,
   climate: 'temperate',
@@ -112,9 +112,9 @@ export const FUKUOKA: City = {
   latitude: 33.5904,
   longitude: 130.4017,
   population: 1600000,
-  costOfLivingIndex: 82,
-  medianRent: 1400,
-  medianHomePrice: 350000,
+  costOfLivingIndex: 58, // Updated Jan 2026 - weak yen effect
+  medianRent: 1100, // Updated Jan 2026
+  medianHomePrice: 280000, // Updated Jan 2026
   transitScore: 82,
   walkScore: 75,
   climate: 'temperate',

@@ -1,18 +1,24 @@
 import { City } from '../../types';
 
+// ============================================================================
+// SALVADORAN CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const SAN_SALVADOR: City = {
   id: 'san_salvador_sv',
   name: 'San Salvador',
   state: 'San Salvador',
   country: 'sv',
   countryCode: 'SV',
-  costOfLivingIndex: 52,
+  costOfLivingIndex: 45, // Updated Jan 2026 (Numbeo: 44.8)
   latitude: 13.6929,
   longitude: -89.2182,
-  medianRent: 550,
-  medianRentLocal: 550,
-  medianHomePrice: 130000,
-  medianHomePriceLocal: 130000,
+  medianRent: 600,
+  medianRentLocal: 600,
+  medianHomePrice: 142000,
+  medianHomePriceLocal: 142000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1025 },
   climate: 'temperate' as const,
@@ -32,39 +38,6 @@ export const SAN_SALVADOR: City = {
   expatCommunitySize: 'small',
 };
 
-export const SANTA_ANA: City = {
-  id: 'santa_ana_sv',
-  name: 'Santa Ana',
-  state: 'Santa Ana',
-  country: 'sv',
-  countryCode: 'SV',
-  latitude: 13.9942,
-  longitude: -89.5597,
-  costOfLivingIndex: 48,
-  medianRent: 450,
-  medianRentLocal: 450,
-  medianHomePrice: 110000,
-  medianHomePriceLocal: 110000,
-  stateTaxRate: 0,
-  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1025 },
-  climate: 'temperate' as const,
-  population: 1000000,
-  crimeIndex: 62,
-  walkScore: 60,
-  transitScore: 48,
-  jobGrowthRate: 5.0,
-  averageCommute: 30,
-  healthcareIndex: 58,
-  educationIndex: 60,
-  entertainmentIndex: 75,
-  outdoorIndex: 70,
-  visaRequired: true,
-  languageBarrier: 'medium',
-  timeZoneOffset: -6,
-  expatCommunitySize: 'small',
-};
-
 export const EL_SALVADOR_CITIES: City[] = [
   SAN_SALVADOR,
-  SANTA_ANA,
 ];

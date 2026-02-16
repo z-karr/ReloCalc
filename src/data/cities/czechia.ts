@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// CZECH CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const PRAGUE: City = {
   id: 'prague_cz',
   name: 'Prague',
@@ -8,11 +14,11 @@ export const PRAGUE: City = {
   countryCode: 'CZ',
   latitude: 50.0755,
   longitude: 14.4378,
-  costOfLivingIndex: 75,
-  medianRent: 1050,
-  medianRentLocal: 23940,
-  medianHomePrice: 350000,
-  medianHomePriceLocal: 7980000,
+  costOfLivingIndex: 52, // Updated Jan 2026 (Numbeo: 51.8)
+  medianRent: 1150,
+  medianRentLocal: 26220,
+  medianHomePrice: 380000,
+  medianHomePriceLocal: 8664000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const BRNO: City = {
   countryCode: 'CZ',
   latitude: 49.1951,
   longitude: 16.6068,
-  costOfLivingIndex: 68,
-  medianRent: 850,
-  medianRentLocal: 19380,
-  medianHomePrice: 270000,
-  medianHomePriceLocal: 6156000,
+  costOfLivingIndex: 47, // Updated Jan 2026 (Numbeo: 46.5)
+  medianRent: 930,
+  medianRentLocal: 21206,
+  medianHomePrice: 290000,
+  medianHomePriceLocal: 6612000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const OSTRAVA: City = {
   countryCode: 'CZ',
   latitude: 49.8209,
   longitude: 18.2625,
-  costOfLivingIndex: 65,
-  medianRent: 700,
-  medianRentLocal: 15960,
-  medianHomePrice: 210000,
-  medianHomePriceLocal: 4788000,
+  costOfLivingIndex: 45, // Updated Jan 2026 (Numbeo: 44.7)
+  medianRent: 770,
+  medianRentLocal: 17556,
+  medianHomePrice: 230000,
+  medianHomePriceLocal: 5244000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const OSTRAVA: City = {
   expatCommunitySize: 'small',
 };
 
+export const PILSEN: City = {
+  id: 'pilsen_cz',
+  name: 'Pilsen',
+  state: 'Plzeň Region',
+  country: 'cz',
+  countryCode: 'CZ',
+  latitude: 49.7384,
+  longitude: 13.3736,
+  costOfLivingIndex: 46, // Updated Jan 2026 (Numbeo: 45.9)
+  medianRent: 800,
+  medianRentLocal: 18240,
+  medianHomePrice: 250000,
+  medianHomePriceLocal: 5700000,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.11 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 28,
+  walkScore: 76,
+  transitScore: 72,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 73,
+  educationIndex: 72,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'medium',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'small',
+};
+
 export const CZECHIA_CITIES: City[] = [
   PRAGUE,
   BRNO,
   OSTRAVA,
+  PILSEN,
 ];

@@ -1,18 +1,24 @@
 import { City } from '../../types';
 
+// ============================================================================
+// CHILEAN CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const SANTIAGO: City = {
   id: 'santiago_cl',
   name: 'Santiago',
   state: 'Santiago Metropolitan',
   country: 'cl',
   countryCode: 'CL',
-  costOfLivingIndex: 65,
+  costOfLivingIndex: 56, // Updated Jan 2026 (Numbeo: 55.8)
   latitude: -33.4489,
   longitude: -70.6693,
-  medianRent: 700,
-  medianRentLocal: 644000,
-  medianHomePrice: 200000,
-  medianHomePriceLocal: 184000000,
+  medianRent: 765,
+  medianRentLocal: 703960,
+  medianHomePrice: 218000,
+  medianHomePriceLocal: 200512000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1876 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const VALPARAISO: City = {
   countryCode: 'CL',
   latitude: -33.0472,
   longitude: -71.6127,
-  costOfLivingIndex: 58,
-  medianRent: 550,
-  medianRentLocal: 506000,
-  medianHomePrice: 150000,
-  medianHomePriceLocal: 138000000,
+  costOfLivingIndex: 52, // Updated Jan 2026 (Numbeo: 51.6)
+  medianRent: 600,
+  medianRentLocal: 552000,
+  medianHomePrice: 163000,
+  medianHomePriceLocal: 149960000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1876 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const CONCEPCION: City = {
   countryCode: 'CL',
   latitude: -36.8201,
   longitude: -73.0444,
-  costOfLivingIndex: 56,
-  medianRent: 500,
-  medianRentLocal: 460000,
-  medianHomePrice: 140000,
-  medianHomePriceLocal: 128800000,
+  costOfLivingIndex: 50, // Updated Jan 2026 (Numbeo: 49.8)
+  medianRent: 545,
+  medianRentLocal: 501400,
+  medianHomePrice: 152000,
+  medianHomePriceLocal: 139840000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1876 },
   climate: 'temperate' as const,

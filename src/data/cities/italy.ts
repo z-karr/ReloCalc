@@ -4,7 +4,7 @@ import { calculateItalianTax } from '../taxSystems/italy';
 // ============================================================================
 // ITALIAN CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Progressive IRPEF + regional + municipal + social security
 
 export const ROME: City = {
@@ -15,11 +15,11 @@ export const ROME: City = {
   countryCode: 'IT',
   latitude: 41.9028,
   longitude: 12.4964,
-  costOfLivingIndex: 93,
-  medianRent: 1200,
-  medianRentLocal: 1104,
-  medianHomePrice: 420000,
-  medianHomePriceLocal: 386400,
+  costOfLivingIndex: 62, // Updated Jan 2026 (Numbeo: 61.8)
+  medianRent: 1250,
+  medianRentLocal: 1150,
+  medianHomePrice: 440000,
+  medianHomePriceLocal: 404800,
   stateTaxRate: 0.0173, // Lazio regional tax
   taxRates: { type: 'progressive_national', regionalRate: 0.0173, socialContributions: 0.0919 },
   climate: 'temperate' as const,
@@ -47,11 +47,11 @@ export const MILAN: City = {
   countryCode: 'IT',
   latitude: 45.4642,
   longitude: 9.1900,
-  costOfLivingIndex: 98,
-  medianRent: 1500,
-  medianRentLocal: 1380,
-  medianHomePrice: 520000,
-  medianHomePriceLocal: 478400,
+  costOfLivingIndex: 73, // Updated Jan 2026 (Numbeo: 72.6)
+  medianRent: 1550,
+  medianRentLocal: 1426,
+  medianHomePrice: 550000,
+  medianHomePriceLocal: 506000,
   stateTaxRate: 0.0173, // Lombardy regional tax
   taxRates: { type: 'progressive_national', regionalRate: 0.0173, socialContributions: 0.0919 },
   climate: 'temperate' as const,
@@ -79,11 +79,11 @@ export const FLORENCE: City = {
   countryCode: 'IT',
   latitude: 43.7696,
   longitude: 11.2558,
-  costOfLivingIndex: 90,
-  medianRent: 1100,
-  medianRentLocal: 1012,
-  medianHomePrice: 380000,
-  medianHomePriceLocal: 349600,
+  costOfLivingIndex: 68, // Updated Jan 2026 (Numbeo: 67.7)
+  medianRent: 1150,
+  medianRentLocal: 1058,
+  medianHomePrice: 400000,
+  medianHomePriceLocal: 368000,
   stateTaxRate: 0.0173, // Tuscany regional tax
   taxRates: { type: 'progressive_national', regionalRate: 0.0173, socialContributions: 0.0919 },
   climate: 'temperate' as const,
@@ -111,11 +111,11 @@ export const VENICE: City = {
   countryCode: 'IT',
   latitude: 45.4408,
   longitude: 12.3155,
-  costOfLivingIndex: 95,
-  medianRent: 1300,
-  medianRentLocal: 1196,
-  medianHomePrice: 450000,
-  medianHomePriceLocal: 414000,
+  costOfLivingIndex: 69, // Updated Jan 2026 (estimated from regional data)
+  medianRent: 1350,
+  medianRentLocal: 1242,
+  medianHomePrice: 470000,
+  medianHomePriceLocal: 432400,
   stateTaxRate: 0.0173, // Veneto regional tax
   taxRates: { type: 'progressive_national', regionalRate: 0.0173, socialContributions: 0.0919 },
   climate: 'temperate' as const,

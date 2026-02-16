@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// DANISH CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive income tax + labor market contribution
+
 export const COPENHAGEN: City = {
   id: 'copenhagen_dk',
   name: 'Copenhagen',
@@ -8,11 +14,11 @@ export const COPENHAGEN: City = {
   countryCode: 'DK',
   latitude: 55.6761,
   longitude: 12.5683,
-  costOfLivingIndex: 104,
-  medianRent: 1700,
-  medianRentLocal: 11679,
-  medianHomePrice: 580000,
-  medianHomePriceLocal: 3984600,
+  costOfLivingIndex: 89, // Updated Jan 2026 (Numbeo: 89.3)
+  medianRent: 1800,
+  medianRentLocal: 12366,
+  medianHomePrice: 620000,
+  medianHomePriceLocal: 4259400,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.08 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const AARHUS: City = {
   countryCode: 'DK',
   latitude: 56.1629,
   longitude: 10.2039,
-  costOfLivingIndex: 95,
-  medianRent: 1350,
-  medianRentLocal: 9274,
-  medianHomePrice: 420000,
-  medianHomePriceLocal: 2885400,
+  costOfLivingIndex: 81, // Updated Jan 2026 (Numbeo: 80.8)
+  medianRent: 1450,
+  medianRentLocal: 9961,
+  medianHomePrice: 450000,
+  medianHomePriceLocal: 3091500,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.08 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const ODENSE: City = {
   countryCode: 'DK',
   latitude: 55.4038,
   longitude: 10.4024,
-  costOfLivingIndex: 92,
-  medianRent: 1200,
-  medianRentLocal: 8244,
-  medianHomePrice: 370000,
-  medianHomePriceLocal: 2541900,
+  costOfLivingIndex: 78, // Updated Jan 2026 (Numbeo: 77.6)
+  medianRent: 1300,
+  medianRentLocal: 8931,
+  medianHomePrice: 390000,
+  medianHomePriceLocal: 2679300,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.08 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const ODENSE: City = {
   expatCommunitySize: 'small',
 };
 
+export const AALBORG: City = {
+  id: 'aalborg_dk',
+  name: 'Aalborg',
+  state: 'North Denmark',
+  country: 'dk',
+  countryCode: 'DK',
+  latitude: 57.0488,
+  longitude: 9.9217,
+  costOfLivingIndex: 79, // Updated Jan 2026 (Numbeo: 78.9)
+  medianRent: 1250,
+  medianRentLocal: 8587,
+  medianHomePrice: 360000,
+  medianHomePriceLocal: 2473200,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.08 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 21,
+  walkScore: 80,
+  transitScore: 72,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 80,
+  educationIndex: 78,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'low',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'small',
+};
+
 export const DENMARK_CITIES: City[] = [
   COPENHAGEN,
   AARHUS,
   ODENSE,
+  AALBORG,
 ];

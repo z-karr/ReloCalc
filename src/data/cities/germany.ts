@@ -13,9 +13,9 @@ export const BERLIN: City = {
   latitude: 52.5200,
   longitude: 13.4050,
   population: 3600000,
-  costOfLivingIndex: 85,
-  medianRent: 1800,
-  medianHomePrice: 450000,
+  costOfLivingIndex: 90, // Updated Jan 2026
+  medianRent: 1900, // Updated Jan 2026 - rising rents
+  medianHomePrice: 480000, // Updated Jan 2026
   transitScore: 85,
   walkScore: 80,
   climate: 'temperate',
@@ -46,9 +46,9 @@ export const MUNICH: City = {
   latitude: 48.1351,
   longitude: 11.5820,
   population: 1500000,
-  costOfLivingIndex: 100,
-  medianRent: 2200,
-  medianHomePrice: 700000,
+  costOfLivingIndex: 74, // Updated Jan 2026 (Numbeo: 74.1)
+  medianRent: 2100,
+  medianHomePrice: 720000,
   transitScore: 82,
   walkScore: 75,
   climate: 'temperate',
@@ -79,9 +79,9 @@ export const FRANKFURT: City = {
   latitude: 50.1109,
   longitude: 8.6821,
   population: 750000,
-  costOfLivingIndex: 95,
-  medianRent: 2000,
-  medianHomePrice: 550000,
+  costOfLivingIndex: 74, // Updated Jan 2026 (Numbeo: 74.0)
+  medianRent: 1950,
+  medianHomePrice: 570000,
   transitScore: 80,
   walkScore: 72,
   climate: 'temperate',
@@ -112,9 +112,9 @@ export const HAMBURG: City = {
   latitude: 53.5511,
   longitude: 9.9937,
   population: 1800000,
-  costOfLivingIndex: 92,
-  medianRent: 1900,
-  medianHomePrice: 500000,
+  costOfLivingIndex: 70, // Updated Jan 2026 (Numbeo: 70.3)
+  medianRent: 1850,
+  medianHomePrice: 520000,
   transitScore: 78,
   walkScore: 74,
   climate: 'temperate',

@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// CHINESE CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const BEIJING: City = {
   id: 'beijing_cn',
   name: 'Beijing',
@@ -8,11 +14,11 @@ export const BEIJING: City = {
   countryCode: 'CN',
   latitude: 39.9042,
   longitude: 116.4074,
-  costOfLivingIndex: 72,
-  medianRent: 950,
-  medianRentLocal: 6878,
-  medianHomePrice: 550000,
-  medianHomePriceLocal: 3982000,
+  costOfLivingIndex: 56, // Updated Jan 2026 (Numbeo: 55.8)
+  medianRent: 1035,
+  medianRentLocal: 7494,
+  medianHomePrice: 598000,
+  medianHomePriceLocal: 4329680,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.225 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const SHANGHAI: City = {
   countryCode: 'CN',
   latitude: 31.2304,
   longitude: 121.4737,
-  costOfLivingIndex: 75,
-  medianRent: 1100,
-  medianRentLocal: 7964,
-  medianHomePrice: 620000,
-  medianHomePriceLocal: 4488800,
+  costOfLivingIndex: 60, // Updated Jan 2026 (Numbeo: 59.5)
+  medianRent: 1200,
+  medianRentLocal: 8688,
+  medianHomePrice: 674000,
+  medianHomePriceLocal: 4879568,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.225 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const SHENZHEN: City = {
   countryCode: 'CN',
   latitude: 22.5431,
   longitude: 114.0579,
-  costOfLivingIndex: 70,
-  medianRent: 950,
-  medianRentLocal: 6878,
-  medianHomePrice: 500000,
-  medianHomePriceLocal: 3620000,
+  costOfLivingIndex: 54, // Updated Jan 2026 (Numbeo: 54.2)
+  medianRent: 1035,
+  medianRentLocal: 7494,
+  medianHomePrice: 545000,
+  medianHomePriceLocal: 3945800,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.225 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const SHENZHEN: City = {
   expatCommunitySize: 'large',
 };
 
+export const GUANGZHOU: City = {
+  id: 'guangzhou_cn',
+  name: 'Guangzhou',
+  state: 'Guangdong',
+  country: 'cn',
+  countryCode: 'CN',
+  latitude: 23.1291,
+  longitude: 113.2644,
+  costOfLivingIndex: 50, // Updated Jan 2026 (Numbeo: 49.6)
+  medianRent: 900,
+  medianRentLocal: 6516,
+  medianHomePrice: 480000,
+  medianHomePriceLocal: 3475200,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.225 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 30,
+  walkScore: 76,
+  transitScore: 88,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 73,
+  educationIndex: 75,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'high',
+  timeZoneOffset: 8,
+  expatCommunitySize: 'large',
+};
+
 export const CHINA_CITIES: City[] = [
   BEIJING,
   SHANGHAI,
   SHENZHEN,
+  GUANGZHOU,
 ];

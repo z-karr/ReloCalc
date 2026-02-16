@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// GREEK CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const ATHENS: City = {
   id: 'athens_gr',
   name: 'Athens',
@@ -8,11 +14,11 @@ export const ATHENS: City = {
   countryCode: 'GR',
   latitude: 37.9838,
   longitude: 23.7275,
-  costOfLivingIndex: 78,
-  medianRent: 750,
-  medianRentLocal: 690,
-  medianHomePrice: 240000,
-  medianHomePriceLocal: 220800,
+  costOfLivingIndex: 62, // Updated Jan 2026 (Numbeo: 61.5)
+  medianRent: 820,
+  medianRentLocal: 754,
+  medianHomePrice: 261000,
+  medianHomePriceLocal: 240120,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1607 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const THESSALONIKI: City = {
   countryCode: 'GR',
   latitude: 40.6401,
   longitude: 22.9444,
-  costOfLivingIndex: 72,
-  medianRent: 600,
-  medianRentLocal: 552,
-  medianHomePrice: 190000,
-  medianHomePriceLocal: 174800,
+  costOfLivingIndex: 57, // Updated Jan 2026 (Numbeo: 57.3)
+  medianRent: 655,
+  medianRentLocal: 602,
+  medianHomePrice: 207000,
+  medianHomePriceLocal: 190440,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1607 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const HERAKLION: City = {
   countryCode: 'GR',
   latitude: 35.3387,
   longitude: 25.1442,
-  costOfLivingIndex: 70,
-  medianRent: 550,
-  medianRentLocal: 506,
-  medianHomePrice: 170000,
-  medianHomePriceLocal: 156400,
+  costOfLivingIndex: 55, // Updated Jan 2026 (Numbeo: 55.1)
+  medianRent: 600,
+  medianRentLocal: 552,
+  medianHomePrice: 185000,
+  medianHomePriceLocal: 170200,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1607 },
   climate: 'temperate' as const,

@@ -4,7 +4,7 @@ import { calculateSpanishTax } from '../taxSystems/spain';
 // ============================================================================
 // SPANISH CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Progressive national + regional tax + social security
 
 export const MADRID: City = {
@@ -15,11 +15,11 @@ export const MADRID: City = {
   countryCode: 'ES',
   latitude: 40.4168,
   longitude: -3.7038,
-  costOfLivingIndex: 88,
-  medianRent: 1300,
-  medianRentLocal: 1196,
-  medianHomePrice: 380000,
-  medianHomePriceLocal: 349600,
+  costOfLivingIndex: 58, // Updated Jan 2026 (Numbeo: 58.4)
+  medianRent: 1350,
+  medianRentLocal: 1242,
+  medianHomePrice: 400000,
+  medianHomePriceLocal: 368000,
   stateTaxRate: 0.09, // Madrid regional tax (lower than average)
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
   climate: 'temperate' as const,
@@ -47,11 +47,11 @@ export const BARCELONA: City = {
   countryCode: 'ES',
   latitude: 41.3851,
   longitude: 2.1734,
-  costOfLivingIndex: 90,
-  medianRent: 1400,
-  medianRentLocal: 1288,
-  medianHomePrice: 420000,
-  medianHomePriceLocal: 386400,
+  costOfLivingIndex: 59, // Updated Jan 2026 (Numbeo: 58.5)
+  medianRent: 1450,
+  medianRentLocal: 1334,
+  medianHomePrice: 440000,
+  medianHomePriceLocal: 404800,
   stateTaxRate: 0.13, // Catalonia regional tax (higher)
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
   climate: 'temperate' as const,
@@ -79,11 +79,11 @@ export const VALENCIA: City = {
   countryCode: 'ES',
   latitude: 39.4699,
   longitude: -0.3763,
-  costOfLivingIndex: 82,
-  medianRent: 950,
-  medianRentLocal: 874,
-  medianHomePrice: 280000,
-  medianHomePriceLocal: 257600,
+  costOfLivingIndex: 51, // Updated Jan 2026 (Numbeo: 50.8)
+  medianRent: 1000,
+  medianRentLocal: 920,
+  medianHomePrice: 300000,
+  medianHomePriceLocal: 276000,
   stateTaxRate: 0.11, // Valencia regional tax
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
   climate: 'temperate' as const,
@@ -111,11 +111,11 @@ export const SEVILLE: City = {
   countryCode: 'ES',
   latitude: 37.3891,
   longitude: -5.9845,
-  costOfLivingIndex: 78,
-  medianRent: 800,
-  medianRentLocal: 736,
-  medianHomePrice: 240000,
-  medianHomePriceLocal: 220800,
+  costOfLivingIndex: 49, // Updated Jan 2026 (Numbeo: 49.1)
+  medianRent: 850,
+  medianRentLocal: 782,
+  medianHomePrice: 260000,
+  medianHomePriceLocal: 239200,
   stateTaxRate: 0.12, // Andalusia regional tax
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0635 },
   climate: 'temperate' as const,

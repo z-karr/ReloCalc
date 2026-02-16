@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// INDONESIAN CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const JAKARTA: City = {
   id: 'jakarta_id',
   name: 'Jakarta',
@@ -8,11 +14,11 @@ export const JAKARTA: City = {
   countryCode: 'ID',
   latitude: -6.2088,
   longitude: 106.8456,
-  costOfLivingIndex: 48,
-  medianRent: 500,
-  medianRentLocal: 7825000,
-  medianHomePrice: 140000,
-  medianHomePriceLocal: 2191000000,
+  costOfLivingIndex: 45, // Updated Jan 2026 (Numbeo: 44.6)
+  medianRent: 545,
+  medianRentLocal: 8529250,
+  medianHomePrice: 152000,
+  medianHomePriceLocal: 2380720000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.03 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const BALI: City = {
   countryCode: 'ID',
   latitude: -8.5069,
   longitude: 115.2625,
-  costOfLivingIndex: 52,
-  medianRent: 550,
-  medianRentLocal: 8607500,
-  medianHomePrice: 180000,
-  medianHomePriceLocal: 2817000000,
+  costOfLivingIndex: 48, // Updated Jan 2026 (Numbeo: 47.5)
+  medianRent: 600,
+  medianRentLocal: 9390000,
+  medianHomePrice: 196000,
+  medianHomePriceLocal: 3067040000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.03 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const SURABAYA: City = {
   countryCode: 'ID',
   latitude: -7.2575,
   longitude: 112.7521,
-  costOfLivingIndex: 44,
-  medianRent: 400,
-  medianRentLocal: 6260000,
-  medianHomePrice: 110000,
-  medianHomePriceLocal: 1721500000,
+  costOfLivingIndex: 40, // Updated Jan 2026 (Numbeo: 40.2)
+  medianRent: 435,
+  medianRentLocal: 6808500,
+  medianHomePrice: 120000,
+  medianHomePriceLocal: 1878000000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.03 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const SURABAYA: City = {
   expatCommunitySize: 'medium',
 };
 
+export const BANDUNG: City = {
+  id: 'bandung_id',
+  name: 'Bandung',
+  state: 'West Java',
+  country: 'id',
+  countryCode: 'ID',
+  latitude: -6.9175,
+  longitude: 107.6191,
+  costOfLivingIndex: 38, // Updated Jan 2026 (Numbeo: 38.4)
+  medianRent: 380,
+  medianRentLocal: 5948000,
+  medianHomePrice: 105000,
+  medianHomePriceLocal: 1643250000,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.03 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 46,
+  walkScore: 60,
+  transitScore: 52,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 62,
+  educationIndex: 65,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'high',
+  timeZoneOffset: 7,
+  expatCommunitySize: 'medium',
+};
+
 export const INDONESIA_CITIES: City[] = [
   JAKARTA,
   BALI,
   SURABAYA,
+  BANDUNG,
 ];

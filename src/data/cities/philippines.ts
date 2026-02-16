@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// PHILIPPINE CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const MANILA: City = {
   id: 'manila_ph',
   name: 'Manila',
@@ -8,11 +14,11 @@ export const MANILA: City = {
   countryCode: 'PH',
   latitude: 14.5995,
   longitude: 120.9842,
-  costOfLivingIndex: 50,
-  medianRent: 550,
-  medianRentLocal: 30690,
-  medianHomePrice: 150000,
-  medianHomePriceLocal: 8370000,
+  costOfLivingIndex: 46, // Updated Jan 2026 (Numbeo: 45.8)
+  medianRent: 600,
+  medianRentLocal: 33480,
+  medianHomePrice: 163000,
+  medianHomePriceLocal: 9092400,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.085 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const CEBU: City = {
   countryCode: 'PH',
   latitude: 10.3157,
   longitude: 123.8854,
-  costOfLivingIndex: 46,
-  medianRent: 480,
-  medianRentLocal: 26784,
-  medianHomePrice: 130000,
-  medianHomePriceLocal: 7254000,
+  costOfLivingIndex: 42, // Updated Jan 2026 (Numbeo: 42.1)
+  medianRent: 525,
+  medianRentLocal: 29295,
+  medianHomePrice: 142000,
+  medianHomePriceLocal: 7923600,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.085 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const DAVAO: City = {
   countryCode: 'PH',
   latitude: 7.1907,
   longitude: 125.4553,
-  costOfLivingIndex: 44,
-  medianRent: 420,
-  medianRentLocal: 23436,
-  medianHomePrice: 120000,
-  medianHomePriceLocal: 6696000,
+  costOfLivingIndex: 40, // Updated Jan 2026 (Numbeo: 39.7)
+  medianRent: 460,
+  medianRentLocal: 25668,
+  medianHomePrice: 131000,
+  medianHomePriceLocal: 7309800,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.085 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const DAVAO: City = {
   expatCommunitySize: 'medium',
 };
 
+export const BAGUIO: City = {
+  id: 'baguio_ph',
+  name: 'Baguio',
+  state: 'Benguet',
+  country: 'ph',
+  countryCode: 'PH',
+  latitude: 16.4023,
+  longitude: 120.5960,
+  costOfLivingIndex: 38, // Updated Jan 2026 (Numbeo: 38.3)
+  medianRent: 400,
+  medianRentLocal: 22320,
+  medianHomePrice: 115000,
+  medianHomePriceLocal: 6417000,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.085 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 38,
+  walkScore: 64,
+  transitScore: 50,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 62,
+  educationIndex: 67,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'none',
+  timeZoneOffset: 8,
+  expatCommunitySize: 'small',
+};
+
 export const PHILIPPINES_CITIES: City[] = [
   MANILA,
   CEBU,
   DAVAO,
+  BAGUIO,
 ];

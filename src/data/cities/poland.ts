@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// POLISH CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive income tax + high social security
+
 export const WARSAW: City = {
   id: 'warsaw_pl',
   name: 'Warsaw',
@@ -8,11 +14,11 @@ export const WARSAW: City = {
   countryCode: 'PL',
   latitude: 52.2297,
   longitude: 21.0122,
-  costOfLivingIndex: 68,
-  medianRent: 950,
-  medianRentLocal: 3819,
-  medianHomePrice: 280000,
-  medianHomePriceLocal: 1125600,
+  costOfLivingIndex: 56, // Updated Jan 2026 (Numbeo: 56.3)
+  medianRent: 1000,
+  medianRentLocal: 4020,
+  medianHomePrice: 300000,
+  medianHomePriceLocal: 1206000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.2571 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const KRAKOW: City = {
   countryCode: 'PL',
   latitude: 50.0647,
   longitude: 19.9450,
-  costOfLivingIndex: 65,
-  medianRent: 850,
-  medianRentLocal: 3417,
-  medianHomePrice: 250000,
-  medianHomePriceLocal: 1005000,
+  costOfLivingIndex: 53, // Updated Jan 2026 (Numbeo: 52.7)
+  medianRent: 900,
+  medianRentLocal: 3618,
+  medianHomePrice: 270000,
+  medianHomePriceLocal: 1085400,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.2571 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const WROCLAW: City = {
   countryCode: 'PL',
   latitude: 51.1079,
   longitude: 17.0385,
-  costOfLivingIndex: 64,
-  medianRent: 800,
-  medianRentLocal: 3216,
-  medianHomePrice: 240000,
-  medianHomePriceLocal: 964800,
+  costOfLivingIndex: 52, // Updated Jan 2026 (Numbeo: 51.8)
+  medianRent: 850,
+  medianRentLocal: 3417,
+  medianHomePrice: 260000,
+  medianHomePriceLocal: 1045200,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.2571 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const WROCLAW: City = {
   expatCommunitySize: 'medium',
 };
 
+export const GDANSK: City = {
+  id: 'gdansk_pl',
+  name: 'Gdansk',
+  state: 'Pomeranian',
+  country: 'pl',
+  countryCode: 'PL',
+  latitude: 54.3520,
+  longitude: 18.6466,
+  costOfLivingIndex: 51, // Updated Jan 2026 (Numbeo: 50.9)
+  medianRent: 830,
+  medianRentLocal: 3336,
+  medianHomePrice: 250000,
+  medianHomePriceLocal: 1005000,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.2571 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 25,
+  walkScore: 78,
+  transitScore: 72,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 66,
+  educationIndex: 70,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'medium',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'medium',
+};
+
 export const POLAND_CITIES: City[] = [
   WARSAW,
   KRAKOW,
   WROCLAW,
+  GDANSK,
 ];

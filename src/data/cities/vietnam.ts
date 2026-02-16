@@ -3,6 +3,8 @@ import { City } from '../../types';
 // ============================================================================
 // VIETNAMESE CITIES
 // ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
 
 export const HO_CHI_MINH_CITY: City = {
   id: 'ho-chi-minh-city',
@@ -12,9 +14,10 @@ export const HO_CHI_MINH_CITY: City = {
   latitude: 10.8231,
   longitude: 106.6297,
   population: 9000000,
-  costOfLivingIndex: 48,
-  medianRent: 650,
-  medianHomePrice: 150000,
+  costOfLivingIndex: 42, // Updated Jan 2026 (Numbeo: 41.5)
+  medianRent: 710,
+  medianHomePrice: 163000,
+  stateTaxRate: 0,
   transitScore: 60,
   walkScore: 68,
   climate: 'tropical',
@@ -44,9 +47,10 @@ export const HANOI: City = {
   latitude: 21.0285,
   longitude: 105.8542,
   population: 8100000,
-  costOfLivingIndex: 45,
-  medianRent: 600,
-  medianHomePrice: 130000,
+  costOfLivingIndex: 39, // Updated Jan 2026 (Numbeo: 38.8)
+  medianRent: 655,
+  medianHomePrice: 142000,
+  stateTaxRate: 0,
   transitScore: 55,
   walkScore: 65,
   climate: 'tropical',
@@ -76,9 +80,10 @@ export const DA_NANG: City = {
   latitude: 16.0544,
   longitude: 108.2022,
   population: 1200000,
-  costOfLivingIndex: 42,
-  medianRent: 550,
-  medianHomePrice: 120000,
+  costOfLivingIndex: 36, // Updated Jan 2026 (Numbeo: 36.2)
+  medianRent: 600,
+  medianHomePrice: 131000,
+  stateTaxRate: 0,
   transitScore: 50,
   walkScore: 60,
   climate: 'tropical',

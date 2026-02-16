@@ -4,7 +4,7 @@ import { calculateDutchTax } from '../taxSystems/netherlands';
 // ============================================================================
 // DUTCH CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Progressive Box 1 tax (combined income + social insurance)
 
 export const AMSTERDAM: City = {
@@ -15,11 +15,11 @@ export const AMSTERDAM: City = {
   countryCode: 'NL',
   latitude: 52.3676,
   longitude: 4.9041,
-  costOfLivingIndex: 105,
-  medianRent: 1900,
-  medianRentLocal: 1748,
-  medianHomePrice: 550000,
-  medianHomePriceLocal: 506000,
+  costOfLivingIndex: 81, // Updated Jan 2026 (Numbeo: 81.1)
+  medianRent: 2000,
+  medianRentLocal: 1840,
+  medianHomePrice: 580000,
+  medianHomePriceLocal: 533600,
   stateTaxRate: 0, // No separate regional tax (included in national)
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0 },
   climate: 'temperate' as const,
@@ -47,11 +47,11 @@ export const ROTTERDAM: City = {
   countryCode: 'NL',
   latitude: 51.9244,
   longitude: 4.4777,
-  costOfLivingIndex: 95,
-  medianRent: 1400,
-  medianRentLocal: 1288,
-  medianHomePrice: 380000,
-  medianHomePriceLocal: 349600,
+  costOfLivingIndex: 73, // Updated Jan 2026 (Numbeo: 73.3)
+  medianRent: 1450,
+  medianRentLocal: 1334,
+  medianHomePrice: 400000,
+  medianHomePriceLocal: 368000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0 },
   climate: 'temperate' as const,
@@ -79,11 +79,11 @@ export const THE_HAGUE: City = {
   countryCode: 'NL',
   latitude: 52.0705,
   longitude: 4.3007,
-  costOfLivingIndex: 97,
-  medianRent: 1500,
-  medianRentLocal: 1380,
-  medianHomePrice: 420000,
-  medianHomePriceLocal: 386400,
+  costOfLivingIndex: 73, // Updated Jan 2026 (Numbeo: 73.1)
+  medianRent: 1550,
+  medianRentLocal: 1426,
+  medianHomePrice: 440000,
+  medianHomePriceLocal: 404800,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0 },
   climate: 'temperate' as const,
@@ -111,11 +111,11 @@ export const UTRECHT: City = {
   countryCode: 'NL',
   latitude: 52.0907,
   longitude: 5.1214,
-  costOfLivingIndex: 98,
-  medianRent: 1550,
-  medianRentLocal: 1426,
-  medianHomePrice: 450000,
-  medianHomePriceLocal: 414000,
+  costOfLivingIndex: 76, // Updated Jan 2026 (Numbeo: 76.2)
+  medianRent: 1600,
+  medianRentLocal: 1472,
+  medianHomePrice: 470000,
+  medianHomePriceLocal: 432400,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0 },
   climate: 'temperate' as const,

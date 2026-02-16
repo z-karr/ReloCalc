@@ -38,6 +38,9 @@ const EXCHANGE_RATES: Record<string, number> = {
   'PHP': 55.80, // Philippine Peso
   'NZD': 1.67, // New Zealand Dollar
   'MAD': 9.98, // Moroccan Dirham
+  'SGD': 1.34, // Singapore Dollar
+  'INR': 83.20, // Indian Rupee
+  'GTQ': 7.78, // Guatemalan Quetzal
 };
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
@@ -70,6 +73,9 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   'PHP': '₱',
   'NZD': 'NZ$',
   'MAD': 'د.م.',
+  'SGD': 'S$',
+  'INR': '₹',
+  'GTQ': 'Q',
 };
 
 const CURRENCY_NAMES: Record<string, string> = {
@@ -102,6 +108,9 @@ const CURRENCY_NAMES: Record<string, string> = {
   'PHP': 'Philippine Peso',
   'NZD': 'New Zealand Dollar',
   'MAD': 'Moroccan Dirham',
+  'SGD': 'Singapore Dollar',
+  'INR': 'Indian Rupee',
+  'GTQ': 'Guatemalan Quetzal',
 };
 
 const LAST_UPDATED = new Date().toISOString();

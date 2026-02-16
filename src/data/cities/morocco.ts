@@ -1,18 +1,24 @@
 import { City } from '../../types';
 
+// ============================================================================
+// MOROCCAN CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const CASABLANCA: City = {
   id: 'casablanca_ma',
   name: 'Casablanca',
   state: 'Casablanca-Settat',
   country: 'ma',
   countryCode: 'MA',
-  costOfLivingIndex: 52,
+  costOfLivingIndex: 40, // Updated Jan 2026 (Numbeo: 39.8)
   latitude: 33.5731,
   longitude: -7.5898,
-  medianRent: 550,
-  medianRentLocal: 5489,
-  medianHomePrice: 150000,
-  medianHomePriceLocal: 1497000,
+  medianRent: 600,
+  medianRentLocal: 5988,
+  medianHomePrice: 163000,
+  medianHomePriceLocal: 1629780,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0674 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const MARRAKECH: City = {
   countryCode: 'MA',
   latitude: 31.6295,
   longitude: -7.9811,
-  costOfLivingIndex: 48,
-  medianRent: 480,
-  medianRentLocal: 4790,
-  medianHomePrice: 130000,
-  medianHomePriceLocal: 1297400,
+  costOfLivingIndex: 37, // Updated Jan 2026 (Numbeo: 36.5)
+  medianRent: 525,
+  medianRentLocal: 5239,
+  medianHomePrice: 142000,
+  medianHomePriceLocal: 1417164,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0674 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const RABAT: City = {
   countryCode: 'MA',
   latitude: 34.0209,
   longitude: -6.8416,
-  costOfLivingIndex: 50,
-  medianRent: 500,
-  medianRentLocal: 4990,
-  medianHomePrice: 140000,
-  medianHomePriceLocal: 1397200,
+  costOfLivingIndex: 38, // Updated Jan 2026 (Numbeo: 38.4)
+  medianRent: 545,
+  medianRentLocal: 5439,
+  medianHomePrice: 152000,
+  medianHomePriceLocal: 1518656,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0674 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const RABAT: City = {
   expatCommunitySize: 'medium',
 };
 
+export const TANGIER: City = {
+  id: 'tangier_ma',
+  name: 'Tangier',
+  state: 'Tanger-Tétouan-Al Hoceïma',
+  country: 'ma',
+  countryCode: 'MA',
+  latitude: 35.7595,
+  longitude: -5.8340,
+  costOfLivingIndex: 36, // Updated Jan 2026 (Numbeo: 35.7)
+  medianRent: 480,
+  medianRentLocal: 4790,
+  medianHomePrice: 135000,
+  medianHomePriceLocal: 1347390,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0674 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 43,
+  walkScore: 68,
+  transitScore: 52,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 60,
+  educationIndex: 61,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'medium',
+  timeZoneOffset: 0,
+  expatCommunitySize: 'medium',
+};
+
 export const MOROCCO_CITIES: City[] = [
   CASABLANCA,
   MARRAKECH,
   RABAT,
+  TANGIER,
 ];

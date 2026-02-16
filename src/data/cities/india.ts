@@ -3,6 +3,8 @@ import { City } from '../../types';
 // ============================================================================
 // INDIAN CITIES
 // ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + EPF
 
 export const MUMBAI: City = {
   id: 'mumbai',
@@ -12,9 +14,10 @@ export const MUMBAI: City = {
   latitude: 19.0760,
   longitude: 72.8777,
   population: 20400000,
-  costOfLivingIndex: 42,
-  medianRent: 650,
-  medianHomePrice: 280000,
+  costOfLivingIndex: 34, // Updated Jan 2026 (Numbeo: 34.2)
+  medianRent: 710,
+  medianHomePrice: 305000,
+  stateTaxRate: 0,
   transitScore: 70,
   walkScore: 65,
   climate: 'tropical',
@@ -44,9 +47,10 @@ export const DELHI: City = {
   latitude: 28.7041,
   longitude: 77.1025,
   population: 32900000,
-  costOfLivingIndex: 38,
-  medianRent: 550,
-  medianHomePrice: 240000,
+  costOfLivingIndex: 30, // Updated Jan 2026 (Numbeo: 30.4)
+  medianRent: 600,
+  medianHomePrice: 261000,
+  stateTaxRate: 0,
   transitScore: 75,
   walkScore: 62,
   climate: 'continental',
@@ -76,9 +80,10 @@ export const BANGALORE: City = {
   latitude: 12.9716,
   longitude: 77.5946,
   population: 13600000,
-  costOfLivingIndex: 40,
-  medianRent: 600,
-  medianHomePrice: 260000,
+  costOfLivingIndex: 32, // Updated Jan 2026 (Numbeo: 32.1)
+  medianRent: 655,
+  medianHomePrice: 283000,
+  stateTaxRate: 0,
   transitScore: 60,
   walkScore: 58,
   climate: 'tropical',
@@ -108,9 +113,10 @@ export const HYDERABAD: City = {
   latitude: 17.3850,
   longitude: 78.4867,
   population: 10500000,
-  costOfLivingIndex: 35,
-  medianRent: 500,
-  medianHomePrice: 200000,
+  costOfLivingIndex: 28, // Updated Jan 2026 (Numbeo: 28.3)
+  medianRent: 545,
+  medianHomePrice: 218000,
+  stateTaxRate: 0,
   transitScore: 55,
   walkScore: 55,
   climate: 'tropical',

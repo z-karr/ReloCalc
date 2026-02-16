@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// NEW ZEALAND CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + ACC levy
+
 export const AUCKLAND: City = {
   id: 'auckland_nz',
   name: 'Auckland',
@@ -8,11 +14,11 @@ export const AUCKLAND: City = {
   state: 'Auckland',
   country: 'nz',
   countryCode: 'NZ',
-  costOfLivingIndex: 95,
-  medianRent: 1600,
-  medianRentLocal: 2672,
-  medianHomePrice: 650000,
-  medianHomePriceLocal: 1085500,
+  costOfLivingIndex: 73, // Updated Jan 2026 (Numbeo: 72.8)
+  medianRent: 1750,
+  medianRentLocal: 2923,
+  medianHomePrice: 710000,
+  medianHomePriceLocal: 1185700,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0139 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const WELLINGTON: City = {
   countryCode: 'NZ',
   latitude: -41.2865,
   longitude: 174.7762,
-  costOfLivingIndex: 92,
-  medianRent: 1500,
-  medianRentLocal: 2505,
-  medianHomePrice: 580000,
-  medianHomePriceLocal: 968600,
+  costOfLivingIndex: 69, // Updated Jan 2026 (Numbeo: 68.5)
+  medianRent: 1640,
+  medianRentLocal: 2739,
+  medianHomePrice: 630000,
+  medianHomePriceLocal: 1052100,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0139 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const QUEENSTOWN: City = {
   countryCode: 'NZ',
   latitude: -45.0312,
   longitude: 168.6626,
-  costOfLivingIndex: 98,
-  medianRent: 1700,
-  medianRentLocal: 2839,
-  medianHomePrice: 750000,
-  medianHomePriceLocal: 1252500,
+  costOfLivingIndex: 75, // Updated Jan 2026 (Numbeo: 75.2)
+  medianRent: 1860,
+  medianRentLocal: 3106,
+  medianHomePrice: 820000,
+  medianHomePriceLocal: 1369400,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.0139 },
   climate: 'temperate' as const,

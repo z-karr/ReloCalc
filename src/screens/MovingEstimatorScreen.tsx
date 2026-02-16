@@ -130,6 +130,10 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
   const [includeOptional, setIncludeOptional] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false); // Starts hidden, shows after calculate
 
+  // Employer relocation assistance
+  const [hasEmployerAssistance, setHasEmployerAssistance] = useState(false);
+  const [employerPercentage, setEmployerPercentage] = useState(50); // Default to 50%
+
   // Dismiss disclaimer for this session only (resets when page is reopened)
   const dismissDisclaimer = () => {
     setShowDisclaimer(false);
@@ -306,6 +310,10 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
   const optionalTotal = optionalExpenses.reduce((sum, e) => sum + e.estimatedCost, 0);
   const displayTotal = includeOptional ? requiredTotal + optionalTotal : requiredTotal;
 
+  // Calculate employer contribution and user's out-of-pocket cost
+  const employerContributionAmount = hasEmployerAssistance ? displayTotal * (employerPercentage / 100) : 0;
+  const userOutOfPocketCost = displayTotal - employerContributionAmount;
+
   // Calculate method comparisons for domestic moves only (not intercontinental/regional)
   const methodComparisons = useMemo(() => {
     if (!moveType || moveType !== 'domestic') return null;
@@ -374,8 +382,8 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
                   </Text>
                 </View>
 
-                {/* Show calculated distance for domestic moves */}
-                {moveType === 'domestic' && (() => {
+                {/* Show calculated distance for domestic and intra-regional moves */}
+                {(moveType === 'domestic' || moveType === 'intra_regional') && (() => {
                   // Get the calculated distance (in the move country's unit)
                   const calculatedDistance = estimate.distance;
                   const moveCountryUsesMiles = countryUsesMiles(fromCity.country);
@@ -618,7 +626,39 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
                   thumbColor={isRenting ? COLORS.primary : COLORS.mediumGray}
                 />
               </View>
+
+              <View style={styles.switchRow}>
+                <View style={styles.switchLabel}>
+                  <Ionicons name="briefcase-outline" size={20} color={COLORS.darkGray} />
+                  <Text style={styles.switchText}>Employer relocation assistance?</Text>
+                </View>
+                <Switch
+                  value={hasEmployerAssistance}
+                  onValueChange={setHasEmployerAssistance}
+                  trackColor={{ false: COLORS.lightGray, true: COLORS.success + '50' }}
+                  thumbColor={hasEmployerAssistance ? COLORS.success : COLORS.mediumGray}
+                />
+              </View>
             </View>
+
+            {hasEmployerAssistance && (
+              <View style={styles.employerSliderSection}>
+                <SliderInput
+                  label="Employer Coverage"
+                  icon="cash-outline"
+                  value={employerPercentage}
+                  onChange={setEmployerPercentage}
+                  min={0}
+                  max={100}
+                  step={5}
+                  formatValue={(v) => `${v}%`}
+                  valueColor={COLORS.success}
+                />
+                <Text style={styles.employerHelperText}>
+                  Your employer will cover {employerPercentage}% of moving costs
+                </Text>
+              </View>
+            )}
 
             <Button
               title="Estimate Moving Costs"
@@ -652,10 +692,38 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
             {/* Total Estimate */}
             <Card style={styles.totalCard}>
               <View style={styles.totalContent}>
-                <Text style={styles.totalLabel}>
-                  {includeOptional ? 'Total with Optional' : 'Base Cost (Required)'}
-                </Text>
-                <Text style={styles.totalValue}>{formatCurrency(displayTotal)}</Text>
+                {!hasEmployerAssistance ? (
+                  <>
+                    <Text style={styles.totalLabel}>
+                      {includeOptional ? 'Total with Optional' : 'Base Cost (Required)'}
+                    </Text>
+                    <Text style={styles.totalValue}>{formatCurrency(displayTotal)}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.totalLabel}>Total Moving Cost</Text>
+                    <Text style={styles.totalValue}>{formatCurrency(displayTotal)}</Text>
+
+                    {/* Employer Contribution */}
+                    <View style={styles.contributionRow}>
+                      <View style={styles.contributionLabel}>
+                        <Ionicons name="briefcase" size={16} color={COLORS.success} />
+                        <Text style={styles.contributionText}>
+                          Employer Contribution ({employerPercentage}%)
+                        </Text>
+                      </View>
+                      <Text style={styles.contributionValue}>
+                        -{formatCurrency(employerContributionAmount)}
+                      </Text>
+                    </View>
+
+                    {/* User's Out of Pocket Cost - Emphasized */}
+                    <View style={styles.outOfPocketRow}>
+                      <Text style={styles.outOfPocketLabel}>Your Cost</Text>
+                      <Text style={styles.outOfPocketValue}>{formatCurrency(userOutOfPocketCost)}</Text>
+                    </View>
+                  </>
+                )}
                 <View style={styles.totalMeta}>
                   <Text style={styles.metaText}>
                     {getHomeSizeLabel(homeSize)} • {(() => {
@@ -1086,6 +1154,69 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.sm,
     color: COLORS.white,
     opacity: 0.7,
+  },
+  employerSliderSection: {
+    marginTop: SPACING.md,
+    paddingTop: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.lightGray,
+  },
+  employerHelperText: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+    marginTop: SPACING.xs,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  contributionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: SPACING.md,
+    paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.white + '30',
+  },
+  contributionLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  contributionText: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.white,
+    opacity: 0.9,
+  },
+  contributionValue: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  outOfPocketRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: SPACING.md,
+    paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    borderTopWidth: 2,
+    borderTopColor: COLORS.white,
+  },
+  outOfPocketLabel: {
+    fontSize: FONTS.sizes.md,
+    fontWeight: '700',
+    color: COLORS.white,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  outOfPocketValue: {
+    fontSize: FONTS.sizes.xxl,
+    fontWeight: '700',
+    color: COLORS.white,
+    letterSpacing: -1,
   },
   optionalToggle: {
     flexDirection: 'row',

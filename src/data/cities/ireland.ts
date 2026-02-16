@@ -4,7 +4,7 @@ import { calculateIrishTax } from '../taxSystems/ireland';
 // ============================================================================
 // IRISH CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Progressive income tax + USC + PRSI
 
 export const DUBLIN: City = {
@@ -15,11 +15,11 @@ export const DUBLIN: City = {
   countryCode: 'IE',
   latitude: 53.3498,
   longitude: -6.2603,
-  costOfLivingIndex: 102,
-  medianRent: 1900,
-  medianRentLocal: 1748,
-  medianHomePrice: 450000,
-  medianHomePriceLocal: 414000,
+  costOfLivingIndex: 85, // Updated Jan 2026 (Numbeo: 85.2)
+  medianRent: 2050,
+  medianRentLocal: 1886,
+  medianHomePrice: 480000,
+  medianHomePriceLocal: 441600,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.04 },
   climate: 'temperate' as const,
@@ -47,11 +47,11 @@ export const CORK: City = {
   countryCode: 'IE',
   latitude: 51.8969,
   longitude: -8.4863,
-  costOfLivingIndex: 88,
-  medianRent: 1400,
-  medianRentLocal: 1288,
-  medianHomePrice: 320000,
-  medianHomePriceLocal: 294400,
+  costOfLivingIndex: 72, // Updated Jan 2026 (Numbeo: 71.8)
+  medianRent: 1500,
+  medianRentLocal: 1380,
+  medianHomePrice: 350000,
+  medianHomePriceLocal: 322000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.04 },
   climate: 'temperate' as const,
@@ -79,11 +79,11 @@ export const GALWAY: City = {
   countryCode: 'IE',
   latitude: 53.2707,
   longitude: -9.0568,
-  costOfLivingIndex: 85,
-  medianRent: 1300,
-  medianRentLocal: 1196,
-  medianHomePrice: 290000,
-  medianHomePriceLocal: 266800,
+  costOfLivingIndex: 70, // Updated Jan 2026 (Numbeo: 69.6)
+  medianRent: 1400,
+  medianRentLocal: 1288,
+  medianHomePrice: 310000,
+  medianHomePriceLocal: 285200,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.04 },
   climate: 'temperate' as const,
@@ -111,11 +111,11 @@ export const LIMERICK: City = {
   countryCode: 'IE',
   latitude: 52.6638,
   longitude: -8.6267,
-  costOfLivingIndex: 82,
-  medianRent: 1200,
-  medianRentLocal: 1104,
-  medianHomePrice: 270000,
-  medianHomePriceLocal: 248400,
+  costOfLivingIndex: 67, // Updated Jan 2026 (Numbeo: 67.3)
+  medianRent: 1300,
+  medianRentLocal: 1196,
+  medianHomePrice: 290000,
+  medianHomePriceLocal: 266800,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.04 },
   climate: 'temperate' as const,

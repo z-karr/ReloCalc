@@ -1,5 +1,11 @@
 import { City } from '../../types';
 
+// ============================================================================
+// NORWEGIAN CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive income tax + social security
+
 export const OSLO: City = {
   id: 'oslo_no',
   name: 'Oslo',
@@ -8,11 +14,11 @@ export const OSLO: City = {
   countryCode: 'NO',
   latitude: 59.9139,
   longitude: 10.7522,
-  costOfLivingIndex: 115,
-  medianRent: 1900,
-  medianRentLocal: 20140,
-  medianHomePrice: 650000,
-  medianHomePriceLocal: 6890000,
+  costOfLivingIndex: 93, // Updated Jan 2026 (Numbeo: 93.2)
+  medianRent: 2000,
+  medianRentLocal: 21200,
+  medianHomePrice: 680000,
+  medianHomePriceLocal: 7208000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.078 },
   climate: 'temperate' as const,
@@ -40,11 +46,11 @@ export const BERGEN: City = {
   countryCode: 'NO',
   latitude: 60.3913,
   longitude: 5.3221,
-  costOfLivingIndex: 105,
-  medianRent: 1550,
-  medianRentLocal: 16430,
-  medianHomePrice: 520000,
-  medianHomePriceLocal: 5512000,
+  costOfLivingIndex: 85, // Updated Jan 2026 (Numbeo: 84.8)
+  medianRent: 1650,
+  medianRentLocal: 17490,
+  medianHomePrice: 550000,
+  medianHomePriceLocal: 5830000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.078 },
   climate: 'temperate' as const,
@@ -72,11 +78,11 @@ export const TRONDHEIM: City = {
   countryCode: 'NO',
   latitude: 63.4305,
   longitude: 10.3951,
-  costOfLivingIndex: 100,
-  medianRent: 1400,
-  medianRentLocal: 14840,
-  medianHomePrice: 460000,
-  medianHomePriceLocal: 4876000,
+  costOfLivingIndex: 82, // Updated Jan 2026 (Numbeo: 81.7)
+  medianRent: 1500,
+  medianRentLocal: 15900,
+  medianHomePrice: 490000,
+  medianHomePriceLocal: 5194000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.078 },
   climate: 'temperate' as const,
@@ -96,8 +102,41 @@ export const TRONDHEIM: City = {
   expatCommunitySize: 'small',
 };
 
+export const STAVANGER: City = {
+  id: 'stavanger_no',
+  name: 'Stavanger',
+  state: 'Rogaland',
+  country: 'no',
+  countryCode: 'NO',
+  latitude: 58.9700,
+  longitude: 5.7331,
+  costOfLivingIndex: 88, // Updated Jan 2026 (Numbeo: 87.6)
+  medianRent: 1700,
+  medianRentLocal: 18020,
+  medianHomePrice: 560000,
+  medianHomePriceLocal: 5936000,
+  stateTaxRate: 0,
+  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.078 },
+  climate: 'temperate' as const,
+  population: 1000000,
+  crimeIndex: 24,
+  walkScore: 78,
+  transitScore: 70,
+  jobGrowthRate: 5.0,
+  averageCommute: 30,
+  healthcareIndex: 81,
+  educationIndex: 80,
+  entertainmentIndex: 75,
+  outdoorIndex: 70,
+  visaRequired: true,
+  languageBarrier: 'low',
+  timeZoneOffset: 1,
+  expatCommunitySize: 'medium',
+};
+
 export const NORWAY_CITIES: City[] = [
   OSLO,
   BERGEN,
   TRONDHEIM,
+  STAVANGER,
 ];

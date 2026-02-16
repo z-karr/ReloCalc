@@ -4,7 +4,7 @@ import { calculateBelgianTax } from '../taxSystems/belgium';
 // ============================================================================
 // BELGIAN CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Progressive federal tax + social security
 
 export const BRUSSELS: City = {
@@ -15,11 +15,11 @@ export const BRUSSELS: City = {
   countryCode: 'BE',
   latitude: 50.8503,
   longitude: 4.3517,
-  costOfLivingIndex: 94,
-  medianRent: 1300,
-  medianRentLocal: 1196,
-  medianHomePrice: 380000,
-  medianHomePriceLocal: 349600,
+  costOfLivingIndex: 80, // Updated Jan 2026 (Numbeo: 79.7)
+  medianRent: 1400,
+  medianRentLocal: 1288,
+  medianHomePrice: 410000,
+  medianHomePriceLocal: 377200,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1305 },
   climate: 'temperate' as const,
@@ -47,11 +47,11 @@ export const ANTWERP: City = {
   countryCode: 'BE',
   latitude: 51.2194,
   longitude: 4.4025,
-  costOfLivingIndex: 88,
-  medianRent: 1100,
-  medianRentLocal: 1012,
-  medianHomePrice: 320000,
-  medianHomePriceLocal: 294400,
+  costOfLivingIndex: 75, // Updated Jan 2026 (Numbeo: 74.8)
+  medianRent: 1200,
+  medianRentLocal: 1104,
+  medianHomePrice: 350000,
+  medianHomePriceLocal: 322000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1305 },
   climate: 'temperate' as const,
@@ -79,11 +79,11 @@ export const GHENT: City = {
   countryCode: 'BE',
   latitude: 51.0543,
   longitude: 3.7174,
-  costOfLivingIndex: 85,
-  medianRent: 1000,
-  medianRentLocal: 920,
-  medianHomePrice: 290000,
-  medianHomePriceLocal: 266800,
+  costOfLivingIndex: 72, // Updated Jan 2026 (Numbeo: 71.6)
+  medianRent: 1100,
+  medianRentLocal: 1012,
+  medianHomePrice: 320000,
+  medianHomePriceLocal: 294400,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1305 },
   climate: 'temperate' as const,
@@ -111,11 +111,11 @@ export const BRUGES: City = {
   countryCode: 'BE',
   latitude: 51.2093,
   longitude: 3.2247,
-  costOfLivingIndex: 82,
-  medianRent: 950,
-  medianRentLocal: 874,
-  medianHomePrice: 270000,
-  medianHomePriceLocal: 248400,
+  costOfLivingIndex: 70, // Updated Jan 2026 (Numbeo: 69.5)
+  medianRent: 1050,
+  medianRentLocal: 966,
+  medianHomePrice: 300000,
+  medianHomePriceLocal: 276000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1305 },
   climate: 'temperate' as const,

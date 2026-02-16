@@ -1,6 +1,7 @@
 import { City, UserPreferences, CityRecommendation } from '../types';
 import { cities } from '../data/cities';
 import { calculateEquivalentSalary } from './taxCalculator';
+import { getCountryById } from '../data/countries';
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   prioritizeWeather: 5,
@@ -20,6 +21,10 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   homeCurrency: 'USD',
   currencyDisplayMode: 'usd_first',
   autoDetected: false,
+
+  // Regional and country filtering (default: all)
+  regionFilter: 'all',
+  countryFilter: 'all',
 };
 
 export const calculateCityScore = (
@@ -31,7 +36,8 @@ export const calculateCityScore = (
   // Normalize all scores to 0-100 range
   const scores = {
     // Cost score: lower COL = higher score
-    cost: Math.max(0, 100 - (city.costOfLivingIndex - 80) * 0.8),
+    // Use aggressive scaling: US average (73.5) = 80 points, very cheap (50) = 100, very expensive (120) = 10
+    cost: Math.max(0, Math.min(100, 200 - (city.costOfLivingIndex * 1.5))),
     
     // Safety score: lower crime = higher score
     safety: Math.max(0, 100 - city.crimeIndex),
@@ -54,7 +60,7 @@ export const calculateCityScore = (
     // Healthcare (already 0-100)
     healthcare: city.healthcareIndex,
     
-    // Job growth (normalized)
+    // Job growth (stored as percentage: 3.0 = 3% growth)
     jobs: Math.min(100, city.jobGrowthRate * 25),
     
     // Commute score (lower = better)
@@ -80,23 +86,33 @@ export const calculateCityScore = (
   }
 
   // Weight each score by user preference (1-10 scale)
-  const totalWeight = 
-    prefs.prioritizeCost +
-    prefs.prioritizeSafety +
-    prefs.prioritizeTransit +
-    prefs.prioritizeOutdoors +
-    prefs.prioritizeEntertainment +
-    prefs.prioritizeEducation +
-    prefs.prioritizeHealthcare;
+  // Square the weights to make high priorities MUCH more impactful
+  // Priority 10 = 100x weight, Priority 5 = 25x weight, Priority 1 = 1x weight
+  const costWeight = prefs.prioritizeCost * prefs.prioritizeCost;
+  const safetyWeight = prefs.prioritizeSafety * prefs.prioritizeSafety;
+  const transitWeight = prefs.prioritizeTransit * prefs.prioritizeTransit;
+  const outdoorsWeight = prefs.prioritizeOutdoors * prefs.prioritizeOutdoors;
+  const entertainmentWeight = prefs.prioritizeEntertainment * prefs.prioritizeEntertainment;
+  const educationWeight = prefs.prioritizeEducation * prefs.prioritizeEducation;
+  const healthcareWeight = prefs.prioritizeHealthcare * prefs.prioritizeHealthcare;
 
-  const weightedScore = 
-    (scores.cost * prefs.prioritizeCost +
-     scores.safety * prefs.prioritizeSafety +
-     scores.transit * prefs.prioritizeTransit +
-     scores.outdoors * prefs.prioritizeOutdoors +
-     scores.entertainment * prefs.prioritizeEntertainment +
-     scores.education * prefs.prioritizeEducation +
-     scores.healthcare * prefs.prioritizeHealthcare) / totalWeight;
+  const totalWeight =
+    costWeight +
+    safetyWeight +
+    transitWeight +
+    outdoorsWeight +
+    entertainmentWeight +
+    educationWeight +
+    healthcareWeight;
+
+  const weightedScore =
+    (scores.cost * costWeight +
+     scores.safety * safetyWeight +
+     scores.transit * transitWeight +
+     scores.outdoors * outdoorsWeight +
+     scores.entertainment * entertainmentWeight +
+     scores.education * educationWeight +
+     scores.healthcare * healthcareWeight) / totalWeight;
 
   return Math.max(0, Math.min(100, weightedScore + climateBonus - commutePenalty - walkPenalty));
 };
@@ -112,59 +128,89 @@ export const generateHighlights = (city: City, preferences: Partial<UserPreferen
     highlights.push('No income tax');
   } else if (city.stateTaxRate === 0 && city.taxRates.type === 'us_federal_state') {
     highlights.push('No state income tax');
+  } else if (city.taxRates.type === 'us_federal_state') {
+    // Calculate total state + local tax rate
+    const totalTaxRate = (city.stateTaxRate || 0) + (city.localTaxRate || 0);
+
+    // Low tax: under 4% combined state+local (excluding 0% which is already highlighted)
+    if (totalTaxRate > 0 && totalTaxRate < 0.04) {
+      highlights.push('Low state income tax');
+    }
+    // Note: High tax is handled in considerations, not highlights
   }
 
-  if (city.costOfLivingIndex < 100) {
+  // US average COL index is approximately 73.5 (calculated from all cities)
+  const US_AVERAGE_COL = 73.5;
+  if (city.costOfLivingIndex < US_AVERAGE_COL) {
     highlights.push('Below-average cost of living');
   }
+  // Note: We don't highlight high COL as a positive - only low COL is a benefit
 
   if (city.walkScore >= 80) {
     highlights.push('Excellent walkability');
+  } else if (city.walkScore >= 65) {
+    highlights.push('Good walkability');
   }
 
   if (city.transitScore >= 70) {
     highlights.push('Strong public transit');
+  } else if (city.transitScore >= 50) {
+    highlights.push('Decent public transit');
   }
 
-  // Fixed: job growth rate is decimal (0.03 = 3%)
-  if (city.jobGrowthRate >= 0.03) {
+  // Job growth rate is stored as percentage (3.0 = 3% annual growth)
+  if (city.jobGrowthRate >= 3.0) {
     highlights.push('High job growth');
+  } else if (city.jobGrowthRate >= 2.0) {
+    highlights.push('Growing job market');
   }
 
   if (city.crimeIndex < 45) {
     highlights.push('Low crime rate');
   }
 
-  if (city.outdoorIndex >= 85) {
+  if (city.outdoorIndex >= 90) {
+    highlights.push('Exceptional outdoor recreation');
+  } else if (city.outdoorIndex >= 80) {
     highlights.push('Great outdoor recreation');
   }
 
-  if (city.educationIndex >= 85) {
+  if (city.educationIndex >= 88) {
     highlights.push('Top-tier education');
+  } else if (city.educationIndex >= 75) {
+    highlights.push('Strong education system');
   }
 
   if (city.healthcareIndex >= 88) {
     highlights.push('Excellent healthcare');
+  } else if (city.healthcareIndex >= 75) {
+    highlights.push('Quality healthcare');
   }
 
   if (city.entertainmentIndex >= 88) {
     highlights.push('Vibrant entertainment scene');
+  } else if (city.entertainmentIndex >= 75) {
+    highlights.push('Strong entertainment options');
   }
 
   if (city.averageCommute < 25) {
     highlights.push('Short average commute');
+  } else if (city.averageCommute <= 27) {
+    highlights.push('Reasonable commute times');
   }
 
-  // International-specific highlights
-  if (!city.visaRequired) {
+  // International-specific highlights (only for non-US cities)
+  const isUSCity = city.country === 'us';
+
+  if (!isUSCity && !city.visaRequired) {
     highlights.push('No visa required');
   }
 
-  if (city.languageBarrier === 'none' || city.languageBarrier === 'low') {
+  if (!isUSCity && (city.languageBarrier === 'none' || city.languageBarrier === 'low')) {
     highlights.push('English widely spoken');
   }
 
-  if (city.expatCommunitySize === 'large') {
+  if (!isUSCity && city.expatCommunitySize === 'large') {
     highlights.push('Large expat community');
   }
 
@@ -226,15 +272,18 @@ export const generateHighlights = (city: City, preferences: Partial<UserPreferen
     }
   }
 
-  return highlights.slice(0, 5); // Increased from 4 to 5 to accommodate preference-based highlights
+  return highlights.slice(0, 6); // Show up to 6 highlights for better city profiles
 };
 
 export const generateConsiderations = (city: City): string[] => {
   const considerations: string[] = [];
 
-  if (city.costOfLivingIndex >= 150) {
+  // US average COL is 73.5
+  const US_AVERAGE_COL = 73.5;
+
+  if (city.costOfLivingIndex >= US_AVERAGE_COL * 2) {
     considerations.push('Very high cost of living');
-  } else if (city.costOfLivingIndex >= 120) {
+  } else if (city.costOfLivingIndex >= US_AVERAGE_COL * 1.3) {
     considerations.push('Above-average cost of living');
   }
 
@@ -254,9 +303,19 @@ export const generateConsiderations = (city: City): string[] => {
     considerations.push('Long average commute');
   }
 
-  // Fixed: handle both US state tax and international tax rates
-  if (city.taxRates.type === 'us_federal_state' && (city.stateTaxRate || 0) >= 0.08) {
-    considerations.push('High state income tax');
+  // Tax warnings for both US and international cities
+  if (city.taxRates.type === 'us_federal_state') {
+    // US cities: check state + local tax
+    const totalTaxRate = (city.stateTaxRate || 0) + (city.localTaxRate || 0);
+    if (totalTaxRate >= 0.08) {
+      considerations.push('High state/local income tax');
+    }
+  } else if (city.taxRates.type === 'progressive_national') {
+    // International cities (Canada, UK, etc.): check regional + social contributions
+    const totalTaxRate = city.taxRates.regionalRate + (city.taxRates.socialContributions || 0);
+    if (totalTaxRate >= 0.12) {
+      considerations.push('High income tax');
+    }
   }
 
   if (city.climate === 'continental') {
@@ -295,7 +354,25 @@ export const getRecommendations = (
   preferences: Partial<UserPreferences> = {},
   excludeCityIds: string[] = []
 ): CityRecommendation[] => {
-  const eligibleCities = cities.filter(c => !excludeCityIds.includes(c.id));
+  // First, filter by region if specified
+  let eligibleCities = cities.filter(c => !excludeCityIds.includes(c.id));
+
+  // Apply regional filter if specified
+  const regionFilter = preferences.regionFilter;
+  if (regionFilter && regionFilter !== 'all' && Array.isArray(regionFilter) && regionFilter.length > 0) {
+    eligibleCities = eligibleCities.filter(city => {
+      const country = getCountryById(city.country || 'us');
+      return country && regionFilter.includes(country.region);
+    });
+  }
+
+  // Apply country filter if specified
+  const countryFilter = preferences.countryFilter;
+  if (countryFilter && countryFilter !== 'all' && Array.isArray(countryFilter) && countryFilter.length > 0) {
+    eligibleCities = eligibleCities.filter(city => {
+      return countryFilter.includes(city.country || 'us');
+    });
+  }
 
   const recommendations = eligibleCities.map(city => {
     const matchScore = calculateCityScore(city, preferences);

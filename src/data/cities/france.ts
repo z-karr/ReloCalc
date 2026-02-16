@@ -4,7 +4,7 @@ import { calculateFrenchTax } from '../taxSystems/france';
 // ============================================================================
 // FRENCH CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Progressive national income tax + social contributions
 
 export const PARIS: City = {
@@ -15,11 +15,11 @@ export const PARIS: City = {
   countryCode: 'FR',
   latitude: 48.8566,
   longitude: 2.3522,
-  costOfLivingIndex: 127,
-  medianRent: 1800,
-  medianRentLocal: 1656,
-  medianHomePrice: 650000,
-  medianHomePriceLocal: 598000,
+  costOfLivingIndex: 78, // Updated Jan 2026 (Numbeo: 77.7)
+  medianRent: 1850,
+  medianRentLocal: 1702,
+  medianHomePrice: 680000,
+  medianHomePriceLocal: 625600,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.22 },
   climate: 'temperate' as const,
@@ -47,11 +47,11 @@ export const LYON: City = {
   countryCode: 'FR',
   latitude: 45.7640,
   longitude: 4.8357,
-  costOfLivingIndex: 98,
-  medianRent: 1100,
-  medianRentLocal: 1012,
-  medianHomePrice: 380000,
-  medianHomePriceLocal: 349600,
+  costOfLivingIndex: 71, // Updated Jan 2026 (Numbeo: 71.1)
+  medianRent: 1150,
+  medianRentLocal: 1058,
+  medianHomePrice: 400000,
+  medianHomePriceLocal: 368000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.22 },
   climate: 'temperate' as const,
@@ -79,11 +79,11 @@ export const MARSEILLE: City = {
   countryCode: 'FR',
   latitude: 43.2965,
   longitude: 5.3698,
-  costOfLivingIndex: 92,
-  medianRent: 950,
-  medianRentLocal: 874,
-  medianHomePrice: 310000,
-  medianHomePriceLocal: 285200,
+  costOfLivingIndex: 73, // Updated Jan 2026 (Numbeo: 72.5)
+  medianRent: 1000,
+  medianRentLocal: 920,
+  medianHomePrice: 330000,
+  medianHomePriceLocal: 303600,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.22 },
   climate: 'temperate' as const,
@@ -111,11 +111,11 @@ export const NICE: City = {
   countryCode: 'FR',
   latitude: 43.7102,
   longitude: 7.2620,
-  costOfLivingIndex: 97,
-  medianRent: 1200,
-  medianRentLocal: 1104,
-  medianHomePrice: 450000,
-  medianHomePriceLocal: 414000,
+  costOfLivingIndex: 72, // Updated Jan 2026 (Numbeo: 72.3)
+  medianRent: 1250,
+  medianRentLocal: 1150,
+  medianHomePrice: 470000,
+  medianHomePriceLocal: 432400,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.22 },
   climate: 'temperate' as const,

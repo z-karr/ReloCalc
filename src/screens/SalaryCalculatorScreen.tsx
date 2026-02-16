@@ -10,25 +10,41 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
-import { Button, Card, CardHeader, CardContent, Input, CityPicker } from '../components';
+import { Button, Card, CardHeader, CardContent, Input, CityPicker, CurrencyDisplay } from '../components';
 import { City } from '../types';
 import { calculateSalary, formatCurrency, formatPercent, calculateEquivalentSalary } from '../utils/taxCalculator';
 import { getTaxBreakdownLabels } from '../utils/taxLabels';
+import { useUserPreferences } from '../context/UserPreferencesContext';
 
 interface SalaryCalculatorScreenProps {
   navigation: any;
 }
 
 export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ navigation }) => {
+  const { preferences } = useUserPreferences();
   const [salary, setSalary] = useState('');
   const [currentCity, setCurrentCity] = useState<City | null>(null);
   const [targetCity, setTargetCity] = useState<City | null>(null);
   const [showResults, setShowResults] = useState(false);
 
+  // Get home currency info
+  const homeCurrency = useMemo(() => {
+    const { getCurrencyByCode } = require('../utils/currency/exchangeRates');
+    return getCurrencyByCode(preferences.homeCurrency);
+  }, [preferences.homeCurrency]);
+
   const parsedSalary = useMemo(() => {
     const cleaned = salary.replace(/[^0-9]/g, '');
-    return parseInt(cleaned, 10) || 0;
-  }, [salary]);
+    const amount = parseInt(cleaned, 10) || 0;
+
+    // Convert from home currency to USD for calculations
+    if (preferences.homeCurrency !== 'USD') {
+      const { convertToUSD } = require('../utils/currency/exchangeRates');
+      return convertToUSD(amount, preferences.homeCurrency);
+    }
+
+    return amount;
+  }, [salary, preferences.homeCurrency]);
 
   const currentCalculation = useMemo(() => {
     if (!currentCity || parsedSalary === 0) return null;
@@ -60,6 +76,16 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
 
   const canCalculate = parsedSalary > 0 && currentCity !== null;
 
+  // Helper function to format currency in user's home currency
+  const formatInHomeCurrency = (amountUSD: number): string => {
+    if (preferences.homeCurrency === 'USD') {
+      return formatCurrency(amountUSD);
+    }
+    const { convertFromUSD } = require('../utils/currency/exchangeRates');
+    const converted = convertFromUSD(amountUSD, preferences.homeCurrency);
+    return `${homeCurrency.symbol}${converted.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -80,8 +106,8 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                 onChangeText={(text) => setSalary(formatSalaryInput(text))}
                 keyboardType="numeric"
                 placeholder="100,000"
-                prefix="$"
-                helper="Enter your pre-tax annual salary"
+                prefix={homeCurrency.symbol}
+                helper={`Enter your pre-tax annual salary in ${homeCurrency.code}`}
               />
 
               <CityPicker
@@ -123,14 +149,13 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                 <CardContent>
                   <View style={styles.mainStat}>
                     <Text style={styles.mainStatLabel}>Monthly Take-Home</Text>
-                    <Text style={styles.mainStatValue}>
-                      {formatCurrency(currentCalculation.monthlyTakeHome)}
-                    </Text>
-                    {currentCalculation.currency.code !== 'USD' && (
-                      <Text style={styles.mainStatValueLocal}>
-                        {formatCurrency(currentCalculation.monthlyTakeHomeLocal, currentCalculation.currency)}
-                      </Text>
-                    )}
+                    <CurrencyDisplay
+                      amountUSD={currentCalculation.monthlyTakeHome}
+                      targetCurrency={currentCalculation.currency.code !== 'USD' ? currentCalculation.currency : undefined}
+                      emphasize="auto"
+                      showBoth={currentCalculation.currency.code !== 'USD'}
+                      style={styles.mainStatValue}
+                    />
                   </View>
 
                   <View style={styles.taxBreakdown}>
@@ -140,12 +165,12 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                         <>
                           <View style={styles.taxRow}>
                             <Text style={styles.taxLabel}>Gross Salary</Text>
-                            <Text style={styles.taxValue}>{formatCurrency(parsedSalary)}</Text>
+                            <Text style={styles.taxValue}>{formatInHomeCurrency(parsedSalary)}</Text>
                           </View>
                           <View style={styles.taxRow}>
                             <Text style={styles.taxLabel}>{labels.national}</Text>
                             <Text style={styles.taxValueNegative}>
-                              -{formatCurrency(currentCalculation.federalTax)}
+                              -{formatInHomeCurrency(currentCalculation.federalTax)}
                             </Text>
                           </View>
                           {labels.regional && currentCalculation.stateTax > 0 && (
@@ -154,7 +179,7 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                                 {labels.regional}{currentCity?.state ? ` (${currentCity.state})` : ''}
                               </Text>
                               <Text style={styles.taxValueNegative}>
-                                -{formatCurrency(currentCalculation.stateTax)}
+                                -{formatInHomeCurrency(currentCalculation.stateTax)}
                               </Text>
                             </View>
                           )}
@@ -162,31 +187,28 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                             <View style={styles.taxRow}>
                               <Text style={styles.taxLabel}>Local Tax</Text>
                               <Text style={styles.taxValueNegative}>
-                                -{formatCurrency(currentCalculation.localTax)}
+                                -{formatInHomeCurrency(currentCalculation.localTax)}
                               </Text>
                             </View>
                           )}
                           <View style={styles.taxRow}>
                             <Text style={styles.taxLabel}>{labels.social}</Text>
                             <Text style={styles.taxValueNegative}>
-                              -{formatCurrency(currentCalculation.fica)}
+                              -{formatInHomeCurrency(currentCalculation.fica)}
                             </Text>
                           </View>
                         </>
                       );
                     })()}
                     <View style={[styles.taxRow, styles.taxRowTotal]}>
-                      <View>
-                        <Text style={styles.taxLabelTotal}>Annual Take-Home</Text>
-                        {currentCalculation.currency.code !== 'USD' && (
-                          <Text style={styles.taxLabelLocal}>
-                            ({formatCurrency(currentCalculation.netSalaryLocal, currentCalculation.currency)})
-                          </Text>
-                        )}
-                      </View>
-                      <Text style={styles.taxValueTotal}>
-                        {formatCurrency(currentCalculation.netSalary)}
-                      </Text>
+                      <Text style={styles.taxLabelTotal}>Annual Take-Home</Text>
+                      <CurrencyDisplay
+                        amountUSD={currentCalculation.netSalary}
+                        targetCurrency={currentCalculation.currency.code !== 'USD' ? currentCalculation.currency : undefined}
+                        emphasize="auto"
+                        showBoth={currentCalculation.currency.code !== 'USD'}
+                        style={styles.taxValueTotal}
+                      />
                     </View>
                   </View>
 
@@ -213,14 +235,13 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                   <CardContent>
                     <View style={styles.mainStat}>
                       <Text style={styles.mainStatLabel}>Monthly Take-Home</Text>
-                      <Text style={styles.mainStatValue}>
-                        {formatCurrency(targetCalculation.monthlyTakeHome)}
-                      </Text>
-                      {targetCalculation.currency.code !== 'USD' && (
-                        <Text style={styles.mainStatValueLocal}>
-                          {formatCurrency(targetCalculation.monthlyTakeHomeLocal, targetCalculation.currency)}
-                        </Text>
-                      )}
+                      <CurrencyDisplay
+                        amountUSD={targetCalculation.monthlyTakeHome}
+                        targetCurrency={targetCalculation.currency.code !== 'USD' ? targetCalculation.currency : undefined}
+                        emphasize="auto"
+                        showBoth={targetCalculation.currency.code !== 'USD'}
+                        style={styles.mainStatValue}
+                      />
                     </View>
 
                     <View style={styles.taxBreakdown}>
@@ -230,12 +251,12 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                           <>
                             <View style={styles.taxRow}>
                               <Text style={styles.taxLabel}>Gross Salary</Text>
-                              <Text style={styles.taxValue}>{formatCurrency(parsedSalary)}</Text>
+                              <Text style={styles.taxValue}>{formatInHomeCurrency(parsedSalary)}</Text>
                             </View>
                             <View style={styles.taxRow}>
                               <Text style={styles.taxLabel}>{labels.national}</Text>
                               <Text style={styles.taxValueNegative}>
-                                -{formatCurrency(targetCalculation.federalTax)}
+                                -{formatInHomeCurrency(targetCalculation.federalTax)}
                               </Text>
                             </View>
                             {labels.regional && targetCalculation.stateTax > 0 && (
@@ -244,7 +265,7 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                                   {labels.regional}{targetCity.state ? ` (${targetCity.state})` : ''}
                                 </Text>
                                 <Text style={styles.taxValueNegative}>
-                                  -{formatCurrency(targetCalculation.stateTax)}
+                                  -{formatInHomeCurrency(targetCalculation.stateTax)}
                                 </Text>
                               </View>
                             )}
@@ -252,44 +273,52 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                               <View style={styles.taxRow}>
                                 <Text style={styles.taxLabel}>Local Tax</Text>
                                 <Text style={styles.taxValueNegative}>
-                                  -{formatCurrency(targetCalculation.localTax)}
+                                  -{formatInHomeCurrency(targetCalculation.localTax)}
                                 </Text>
                               </View>
                             )}
                             <View style={styles.taxRow}>
                               <Text style={styles.taxLabel}>{labels.social}</Text>
                               <Text style={styles.taxValueNegative}>
-                                -{formatCurrency(targetCalculation.fica)}
+                                -{formatInHomeCurrency(targetCalculation.fica)}
                               </Text>
                             </View>
                           </>
                         );
                       })()}
                       <View style={[styles.taxRow, styles.taxRowTotal]}>
-                        <View>
-                          <Text style={styles.taxLabelTotal}>Annual Take-Home</Text>
-                          {targetCalculation.currency.code !== 'USD' && (
-                            <Text style={styles.taxLabelLocal}>
-                              ({formatCurrency(targetCalculation.netSalaryLocal, targetCalculation.currency)})
-                            </Text>
-                          )}
-                        </View>
-                        <Text style={styles.taxValueTotal}>
-                          {formatCurrency(targetCalculation.netSalary)}
-                        </Text>
+                        <Text style={styles.taxLabelTotal}>Annual Take-Home</Text>
+                        <CurrencyDisplay
+                          amountUSD={targetCalculation.netSalary}
+                          targetCurrency={targetCalculation.currency.code !== 'USD' ? targetCalculation.currency : undefined}
+                          emphasize="auto"
+                          showBoth={targetCalculation.currency.code !== 'USD'}
+                          style={styles.taxValueTotal}
+                        />
                       </View>
+                    </View>
+
+                    <View style={styles.effectiveRate}>
+                      <Text style={styles.effectiveRateLabel}>Effective Tax Rate</Text>
+                      <Text style={styles.effectiveRateValue}>
+                        {formatPercent(targetCalculation.effectiveTaxRate)}
+                      </Text>
                     </View>
 
                     <View style={styles.comparison}>
                       <View style={styles.comparisonItem}>
                         <Text style={styles.comparisonLabel}>COL-Adjusted Value</Text>
-                        <Text style={styles.comparisonValue}>
-                          {formatCurrency(targetCalculation.adjustedNetSalary)}
-                        </Text>
+                        <CurrencyDisplay
+                          amountUSD={targetCalculation.adjustedNetSalary}
+                          targetCurrency={targetCalculation.currency.code !== 'USD' ? targetCalculation.currency : undefined}
+                          emphasize="auto"
+                          showBoth={targetCalculation.currency.code !== 'USD'}
+                          style={styles.comparisonValue}
+                        />
                         <Text style={styles.comparisonNote}>
                           {targetCalculation.adjustedNetSalary > currentCalculation.netSalary
-                            ? `+${formatCurrency(targetCalculation.adjustedNetSalary - currentCalculation.netSalary)} better purchasing power`
-                            : `${formatCurrency(targetCalculation.adjustedNetSalary - currentCalculation.netSalary)} less purchasing power`}
+                            ? `+${formatInHomeCurrency(targetCalculation.adjustedNetSalary - currentCalculation.netSalary)} better purchasing power`
+                            : `${formatInHomeCurrency(targetCalculation.adjustedNetSalary - currentCalculation.netSalary)} less purchasing power`}
                         </Text>
                       </View>
                     </View>
@@ -301,14 +330,13 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
                           <Text style={styles.equivalentLabel}>
                             To maintain your current lifestyle in {targetCity.name}:
                           </Text>
-                          <Text style={styles.equivalentValue}>
-                            {formatCurrency(equivalentSalary)}
-                          </Text>
-                          {targetCalculation.currency.code !== 'USD' && (
-                            <Text style={styles.equivalentValueLocal}>
-                              {formatCurrency(equivalentSalary * targetCalculation.currency.exchangeRate, targetCalculation.currency)}
-                            </Text>
-                          )}
+                          <CurrencyDisplay
+                            amountUSD={equivalentSalary}
+                            targetCurrency={targetCalculation.currency.code !== 'USD' ? targetCalculation.currency : undefined}
+                            emphasize="auto"
+                            showBoth={targetCalculation.currency.code !== 'USD'}
+                            style={styles.equivalentValue}
+                          />
                         </View>
                       </View>
                     )}
@@ -490,10 +518,12 @@ const styles = StyleSheet.create({
   },
   equivalentText: {
     flex: 1,
+    alignItems: 'center',
   },
   equivalentLabel: {
     fontSize: FONTS.sizes.sm,
     color: COLORS.darkGray,
+    textAlign: 'center',
   },
   equivalentValue: {
     fontSize: FONTS.sizes.lg,

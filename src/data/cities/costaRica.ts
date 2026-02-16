@@ -1,18 +1,24 @@
 import { City } from '../../types';
 
+// ============================================================================
+// COSTA RICAN CITIES
+// ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
+
 export const SAN_JOSE: City = {
   id: 'san_jose_cr',
   name: 'San José',
   state: 'San José Province',
   country: 'cr',
   countryCode: 'CR',
-  costOfLivingIndex: 68,
+  costOfLivingIndex: 55, // Updated Jan 2026 (Numbeo: 54.6)
   latitude: 9.9281,
   longitude: -84.0907,
-  medianRent: 750,
-  medianRentLocal: 390000,
-  medianHomePrice: 220000,
-  medianHomePriceLocal: 114400000,
+  medianRent: 820,
+  medianRentLocal: 426400,
+  medianHomePrice: 240000,
+  medianHomePriceLocal: 124800000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1067 },
   climate: 'temperate' as const,
@@ -32,72 +38,6 @@ export const SAN_JOSE: City = {
   expatCommunitySize: 'large',
 };
 
-export const TAMARINDO: City = {
-  id: 'tamarindo_cr',
-  name: 'Tamarindo',
-  state: 'Guanacaste',
-  country: 'cr',
-  countryCode: 'CR',
-  latitude: 10.3008,
-  longitude: -85.8395,
-  costOfLivingIndex: 72,
-  medianRent: 850,
-  medianRentLocal: 442000,
-  medianHomePrice: 280000,
-  medianHomePriceLocal: 145600000,
-  stateTaxRate: 0,
-  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1067 },
-  climate: 'temperate' as const,
-  population: 1000000,
-  crimeIndex: 35,
-  walkScore: 55,
-  transitScore: 40,
-  jobGrowthRate: 5.0,
-  averageCommute: 30,
-  healthcareIndex: 68,
-  educationIndex: 65,
-  entertainmentIndex: 75,
-  outdoorIndex: 70,
-  visaRequired: true,
-  languageBarrier: 'low',
-  timeZoneOffset: -6,
-  expatCommunitySize: 'large',
-};
-
-export const UVITA: City = {
-  id: 'uvita_cr',
-  name: 'Uvita',
-  state: 'Puntarenas',
-  country: 'cr',
-  countryCode: 'CR',
-  latitude: 9.1667,
-  longitude: -83.7333,
-  costOfLivingIndex: 65,
-  medianRent: 700,
-  medianRentLocal: 364000,
-  medianHomePrice: 240000,
-  medianHomePriceLocal: 124800000,
-  stateTaxRate: 0,
-  taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.1067 },
-  climate: 'temperate' as const,
-  population: 1000000,
-  crimeIndex: 30,
-  walkScore: 45,
-  transitScore: 35,
-  jobGrowthRate: 5.0,
-  averageCommute: 30,
-  healthcareIndex: 66,
-  educationIndex: 63,
-  entertainmentIndex: 75,
-  outdoorIndex: 70,
-  visaRequired: true,
-  languageBarrier: 'low',
-  timeZoneOffset: -6,
-  expatCommunitySize: 'medium',
-};
-
 export const COSTA_RICA_CITIES: City[] = [
   SAN_JOSE,
-  TAMARINDO,
-  UVITA,
 ];

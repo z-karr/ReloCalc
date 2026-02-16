@@ -109,7 +109,7 @@ export const getCitiesByRegion = (region: string): City[] => {
   // Filter cities by their country's region
   return allCities.filter(city => {
     if (region === 'north_america') {
-      return city.country === 'us' || city.country === 'ca';
+      return city.country === 'us' || city.country === 'ca' || city.country === 'mx';
     }
     if (region === 'latin_america') {
       return city.country === 'ar' || city.country === 'mx' || city.country === 'br' || city.country === 'cl' || city.country === 'cr' || city.country === 'sv' || city.country === 'gt';
@@ -118,15 +118,17 @@ export const getCitiesByRegion = (region: string): City[] => {
       return city.country === 'de' || city.country === 'pt' || city.country === 'gb' || city.country === 'uk' || city.country === 'fr' || city.country === 'es' || city.country === 'it' || city.country === 'nl' || city.country === 'ie' || city.country === 'ch' || city.country === 'be' || city.country === 'se' || city.country === 'dk' || city.country === 'no' || city.country === 'pl' || city.country === 'gr' || city.country === 'cz';
     }
     if (region === 'asia_pacific') {
-      return city.country === 'au' || city.country === 'jp' || city.country === 'kr' || city.country === 'tw' || city.country === 'th' || city.country === 'sg' || city.country === 'in' || city.country === 'vn' || city.country === 'cn' || city.country === 'id' || city.country === 'ph' || city.country === 'nz';
+      return city.country === 'jp' || city.country === 'kr' || city.country === 'tw' || city.country === 'th' || city.country === 'sg' || city.country === 'in' || city.country === 'vn' || city.country === 'cn' || city.country === 'id' || city.country === 'ph';
+    }
+    if (region === 'oceania') {
+      return city.country === 'au' || city.country === 'nz';
     }
     if (region === 'africa') {
       return city.country === 'za' || city.country === 'ma';
     }
     if (region === 'middle_east') {
-      return city.country === 'ae';
+      return city.country === 'ae' || city.country === 'ma';
     }
-    // Add more regions as we expand
     return false;
   });
 };

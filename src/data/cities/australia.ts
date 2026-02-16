@@ -13,9 +13,9 @@ export const SYDNEY: City = {
   latitude: -33.8688,
   longitude: 151.2093,
   population: 5312000,
-  costOfLivingIndex: 97, // Expensive, similar to NYC
-  medianRent: 2800,
-  medianHomePrice: 950000,
+  costOfLivingIndex: 75, // Updated Jan 2026 (Numbeo: 74.6)
+  medianRent: 2700,
+  medianHomePrice: 980000,
   transitScore: 75,
   walkScore: 70,
   climate: 'temperate',
@@ -46,9 +46,9 @@ export const MELBOURNE: City = {
   latitude: -37.8136,
   longitude: 144.9631,
   population: 5078000,
-  costOfLivingIndex: 92,
-  medianRent: 2400,
-  medianHomePrice: 780000,
+  costOfLivingIndex: 72, // Updated Jan 2026 (Numbeo: 71.5)
+  medianRent: 2300,
+  medianHomePrice: 800000,
   transitScore: 78,
   walkScore: 72,
   climate: 'temperate',
@@ -79,9 +79,9 @@ export const BRISBANE: City = {
   latitude: -27.4698,
   longitude: 153.0251,
   population: 2560000,
-  costOfLivingIndex: 85,
-  medianRent: 2000,
-  medianHomePrice: 650000,
+  costOfLivingIndex: 66, // Updated Jan 2026 (Numbeo: 65.8)
+  medianRent: 1950,
+  medianHomePrice: 670000,
   transitScore: 65,
   walkScore: 65,
   climate: 'tropical', // Subtropical

@@ -3,6 +3,8 @@ import { City } from '../../types';
 // ============================================================================
 // TAIWANESE CITIES
 // ============================================================================
+// Cost of Living data from Numbeo (January 2026) - Updated
+// Tax system: Progressive national tax + social security
 
 export const TAIPEI: City = {
   id: 'taipei',
@@ -12,9 +14,10 @@ export const TAIPEI: City = {
   latitude: 25.0330,
   longitude: 121.5654,
   population: 2600000,
-  costOfLivingIndex: 75,
-  medianRent: 1200,
-  medianHomePrice: 450000,
+  costOfLivingIndex: 62, // Updated Jan 2026 (Numbeo: 61.5)
+  medianRent: 1310,
+  medianHomePrice: 490000,
+  stateTaxRate: 0,
   transitScore: 92,
   walkScore: 88,
   climate: 'tropical',
@@ -44,9 +47,10 @@ export const KAOHSIUNG: City = {
   latitude: 22.6273,
   longitude: 120.3014,
   population: 2800000,
-  costOfLivingIndex: 65,
-  medianRent: 900,
-  medianHomePrice: 320000,
+  costOfLivingIndex: 56, // Updated Jan 2026 (Numbeo: 55.8)
+  medianRent: 980,
+  medianHomePrice: 350000,
+  stateTaxRate: 0,
   transitScore: 80,
   walkScore: 75,
   climate: 'tropical',
@@ -76,9 +80,10 @@ export const TAICHUNG: City = {
   latitude: 24.1477,
   longitude: 120.6736,
   population: 2800000,
-  costOfLivingIndex: 68,
-  medianRent: 1000,
-  medianHomePrice: 350000,
+  costOfLivingIndex: 58, // Updated Jan 2026 (Numbeo: 58.2)
+  medianRent: 1090,
+  medianHomePrice: 380000,
+  stateTaxRate: 0,
   transitScore: 75,
   walkScore: 72,
   climate: 'tropical',

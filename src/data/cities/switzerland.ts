@@ -4,7 +4,7 @@ import { calculateSwissTax } from '../taxSystems/switzerland';
 // ============================================================================
 // SWISS CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Federal + Cantonal + Municipal + Social security
 // Note: Cantonal tax rates vary significantly - using city-specific rates
 
@@ -16,11 +16,11 @@ export const ZURICH: City = {
   countryCode: 'CH',
   latitude: 47.3769,
   longitude: 8.5417,
-  costOfLivingIndex: 135,
-  medianRent: 2400,
-  medianRentLocal: 2112,
-  medianHomePrice: 950000,
-  medianHomePriceLocal: 836000,
+  costOfLivingIndex: 117, // Updated Jan 2026 (Numbeo: 116.5)
+  medianRent: 2500,
+  medianRentLocal: 2200,
+  medianHomePrice: 1000000,
+  medianHomePriceLocal: 880000,
   stateTaxRate: 0.11, // Zurich canton rate
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.141 },
   climate: 'temperate' as const,
@@ -48,11 +48,11 @@ export const GENEVA: City = {
   countryCode: 'CH',
   latitude: 46.2044,
   longitude: 6.1432,
-  costOfLivingIndex: 140,
-  medianRent: 2600,
-  medianRentLocal: 2288,
-  medianHomePrice: 1050000,
-  medianHomePriceLocal: 924000,
+  costOfLivingIndex: 115, // Updated Jan 2026 (Numbeo: 115.0)
+  medianRent: 2700,
+  medianRentLocal: 2376,
+  medianHomePrice: 1100000,
+  medianHomePriceLocal: 968000,
   stateTaxRate: 0.12, // Geneva canton rate (slightly higher)
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.141 },
   climate: 'temperate' as const,
@@ -80,11 +80,11 @@ export const BASEL: City = {
   countryCode: 'CH',
   latitude: 47.5596,
   longitude: 7.5886,
-  costOfLivingIndex: 130,
-  medianRent: 2100,
-  medianRentLocal: 1848,
-  medianHomePrice: 850000,
-  medianHomePriceLocal: 748000,
+  costOfLivingIndex: 110, // Updated Jan 2026 (Numbeo: 109.9)
+  medianRent: 2200,
+  medianRentLocal: 1936,
+  medianHomePrice: 900000,
+  medianHomePriceLocal: 792000,
   stateTaxRate: 0.10, // Basel canton rate
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.141 },
   climate: 'temperate' as const,
@@ -112,11 +112,11 @@ export const BERN: City = {
   countryCode: 'CH',
   latitude: 46.9480,
   longitude: 7.4474,
-  costOfLivingIndex: 125,
-  medianRent: 1900,
-  medianRentLocal: 1672,
-  medianHomePrice: 780000,
-  medianHomePriceLocal: 686400,
+  costOfLivingIndex: 106, // Updated Jan 2026 (Numbeo: 106.2)
+  medianRent: 2000,
+  medianRentLocal: 1760,
+  medianHomePrice: 820000,
+  medianHomePriceLocal: 721600,
   stateTaxRate: 0.10, // Bern canton rate
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.141 },
   climate: 'temperate' as const,

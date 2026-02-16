@@ -4,7 +4,7 @@ import { calculateSwedishTax } from '../taxSystems/sweden';
 // ============================================================================
 // SWEDISH CITIES
 // ============================================================================
-// Cost of Living data from Numbeo (January 2024)
+// Cost of Living data from Numbeo (January 2026) - Updated
 // Tax system: Municipal tax + State tax (high earners) + pension contribution
 
 export const STOCKHOLM: City = {
@@ -15,11 +15,11 @@ export const STOCKHOLM: City = {
   countryCode: 'SE',
   latitude: 59.3293,
   longitude: 18.0686,
-  costOfLivingIndex: 98,
-  medianRent: 1600,
-  medianRentLocal: 16560,
-  medianHomePrice: 520000,
-  medianHomePriceLocal: 5382000,
+  costOfLivingIndex: 85, // Updated Jan 2026 (Numbeo: 84.6)
+  medianRent: 1700,
+  medianRentLocal: 17595,
+  medianHomePrice: 550000,
+  medianHomePriceLocal: 5692500,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.07 },
   climate: 'temperate' as const,
@@ -47,11 +47,11 @@ export const GOTHENBURG: City = {
   countryCode: 'SE',
   latitude: 57.7089,
   longitude: 11.9746,
-  costOfLivingIndex: 91,
-  medianRent: 1300,
-  medianRentLocal: 13455,
-  medianHomePrice: 410000,
-  medianHomePriceLocal: 4243500,
+  costOfLivingIndex: 78, // Updated Jan 2026 (Numbeo: 77.9)
+  medianRent: 1400,
+  medianRentLocal: 14490,
+  medianHomePrice: 440000,
+  medianHomePriceLocal: 4554000,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.07 },
   climate: 'temperate' as const,
@@ -79,11 +79,11 @@ export const MALMO: City = {
   countryCode: 'SE',
   latitude: 55.6050,
   longitude: 13.0038,
-  costOfLivingIndex: 88,
-  medianRent: 1200,
-  medianRentLocal: 12420,
-  medianHomePrice: 350000,
-  medianHomePriceLocal: 3622500,
+  costOfLivingIndex: 75, // Updated Jan 2026 (Numbeo: 75.2)
+  medianRent: 1300,
+  medianRentLocal: 13455,
+  medianHomePrice: 370000,
+  medianHomePriceLocal: 3829500,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.07 },
   climate: 'temperate' as const,
@@ -111,11 +111,11 @@ export const UPPSALA: City = {
   countryCode: 'SE',
   latitude: 59.8586,
   longitude: 17.6389,
-  costOfLivingIndex: 90,
-  medianRent: 1250,
-  medianRentLocal: 12937,
-  medianHomePrice: 380000,
-  medianHomePriceLocal: 3933000,
+  costOfLivingIndex: 77, // Updated Jan 2026 (Numbeo: 76.8)
+  medianRent: 1350,
+  medianRentLocal: 13972,
+  medianHomePrice: 410000,
+  medianHomePriceLocal: 4243500,
   stateTaxRate: 0,
   taxRates: { type: 'progressive_national', regionalRate: 0, socialContributions: 0.07 },
   climate: 'temperate' as const,
