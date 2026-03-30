@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   SectionList,
   Modal,
+  Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { City } from '../types';
 import { cities, searchCities, getCitiesByCountry } from '../data/cities';
 import { getCountryById } from '../data/countries';
-import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
+import { COLORS, FONTS, SPACING, RADIUS, SHADOWS, LAYOUT } from '../theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useUserPreferences } from '../context/UserPreferencesContext';
 import { isVisaRequired } from '../utils/visaRequirements';
@@ -122,11 +124,13 @@ export const CityPicker: React.FC<CityPickerProps> = ({
 
       <Modal
         visible={isOpen}
-        animationType="slide"
-        presentationStyle="pageSheet"
+        animationType={Platform.OS === 'web' ? 'fade' : 'slide'}
+        presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
+        transparent={Platform.OS === 'web'}
         onRequestClose={() => setIsOpen(false)}
       >
-        <View style={styles.modal}>
+        <View style={[styles.modal, Platform.OS === 'web' && styles.webModalOverlay]}>
+          <View style={[Platform.OS === 'web' && styles.webModalContent]}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Select City</Text>
             <TouchableOpacity
@@ -240,6 +244,7 @@ export const CityPicker: React.FC<CityPickerProps> = ({
             )}
             stickySectionHeadersEnabled={false}
           />
+          </View>
         </View>
       </Modal>
     </View>
@@ -265,6 +270,9 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     borderWidth: 2,
     borderColor: 'transparent',
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+    }),
   },
   selectorContent: {
     flex: 1,
@@ -293,6 +301,22 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     backgroundColor: COLORS.white,
+  },
+  webModalOverlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  webModalContent: {
+    width: '100%',
+    maxWidth: 500,
+    maxHeight: '90%',
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.lg,
+    overflow: 'hidden',
+    ...(Platform.OS === 'web' && {
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+    }),
   },
   modalHeader: {
     flexDirection: 'row',
@@ -326,6 +350,7 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.base,
     color: COLORS.charcoal,
     paddingVertical: SPACING.md,
+    paddingLeft: SPACING.sm,
   },
   explainerBanner: {
     backgroundColor: COLORS.infoLight,
@@ -357,6 +382,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.base,
     paddingVertical: SPACING.md,
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+    }),
   },
   cityItemSelected: {
     backgroundColor: COLORS.infoLight,
@@ -425,6 +453,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderBottomColor: COLORS.lightGray,
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+    }),
   },
   sectionHeaderContent: {
     flexDirection: 'row',

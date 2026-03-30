@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS, LAYOUT } from '../theme';
@@ -179,6 +180,9 @@ const styles = StyleSheet.create({
   settingsButton: {
     padding: SPACING.sm,
     marginTop: -SPACING.xs,
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+    }),
   },
   appName: {
     fontSize: FONTS.sizes.hero,
@@ -241,6 +245,11 @@ const styles = StyleSheet.create({
     padding: SPACING.base,
     marginBottom: SPACING.md,
     ...SHADOWS.md,
+    // Web-specific: cursor pointer and hover transition
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+      transition: 'transform 0.15s, box-shadow 0.15s',
+    }),
   },
   iconContainer: {
     width: 52,

@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
+  Platform,
 } from 'react-native';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 
@@ -117,6 +118,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: RADIUS.md,
     gap: SPACING.sm,
+    // Web-specific: cursor pointer for better UX
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+      userSelect: 'none',
+      transition: 'opacity 0.2s, transform 0.1s',
+    }),
   },
   fullWidth: {
     width: '100%',

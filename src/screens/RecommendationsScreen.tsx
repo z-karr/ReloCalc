@@ -9,17 +9,23 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
-import { Button, Card, CardHeader, CardContent, Input, CityPicker, SliderInput } from '../components';
+import { Button, Card, CardHeader, CardContent, Input, CityPicker, SliderInput, DataDisclaimer } from '../components';
 import { City, UserPreferences, CityRecommendation, Region, Country } from '../types';
 import { getTopRecommendations } from '../utils/recommendations';
 import { formatCurrency } from '../utils/taxCalculator';
 import { getAllCountries } from '../data/countries';
+import { useUserPreferences } from '../context/UserPreferencesContext';
+import { CurrencyService } from '../utils/currency/exchangeRates';
 
 interface RecommendationsScreenProps {
   navigation: any;
 }
 
 export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ navigation }) => {
+  // Get currency symbol from user preferences
+  const { preferences: userPrefs } = useUserPreferences();
+  const currencySymbol = CurrencyService.getCurrency(userPrefs.homeCurrency).symbol;
+
   const [currentCity, setCurrentCity] = useState<City | null>(null);
   const [salary, setSalary] = useState('');
   const [showPreferences, setShowPreferences] = useState(false);
@@ -246,7 +252,7 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
               onChangeText={(text) => setSalary(formatSalaryInput(text))}
               keyboardType="numeric"
               placeholder="100,000"
-              prefix="$"
+              prefix={currencySymbol}
               helper="We'll calculate equivalent salaries"
             />
 
@@ -534,6 +540,13 @@ export const RecommendationsScreen: React.FC<RecommendationsScreenProps> = ({ na
               </Text>
             </CardContent>
           </Card>
+        )}
+
+        {/* Data Disclaimer - show when results are displayed */}
+        {showResults && allRecommendations.length > 0 && (
+          <View style={styles.disclaimerContainer}>
+            <DataDisclaimer variant="inline" />
+          </View>
         )}
 
         <View style={styles.footer} />
@@ -839,6 +852,11 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: SPACING.xxl,
+  },
+  disclaimerContainer: {
+    marginHorizontal: SPACING.base,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.md,
   },
   filterBadge: {
     backgroundColor: COLORS.primary,

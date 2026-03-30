@@ -126,6 +126,20 @@ export interface City {
   languageBarrier?: LanguageBarrier; // Optional, defaults to 'none' for US/UK/AU/etc.
   timeZoneOffset?: number;   // Hours from UTC (optional)
   expatCommunitySize?: 'small' | 'medium' | 'large'; // Optional
+
+  // PREMIUM: Optional city-specific premium data
+  // If not provided, defaults from PREMIUM_DEFAULTS in types/premium.ts are used
+  premiumData?: {
+    propertyTaxRate?: number;       // Annual % of home value
+    homeInsuranceRate?: number;     // Annual % of home value
+    avgMaintenanceCost?: number;    // Annual % of home value
+    avgHOAFees?: number;            // Monthly average
+    rentInflationRate?: number;     // Annual %
+    homeAppreciationRate?: number;  // Annual %
+    salaryGrowthRate?: number;      // Annual %
+    currentMortgageRate?: number;   // Annual %
+    typicalDownPayment?: number;    // % required
+  };
 }
 
 export type ClimateType = 'tropical' | 'dry' | 'temperate' | 'continental' | 'polar';

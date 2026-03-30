@@ -12,6 +12,7 @@ import { useUserPreferences } from '../context/UserPreferencesContext';
 import { getAllCountries, getCountryById } from '../data/countries';
 import { COLORS, FONTS, SPACING, RADIUS } from '../theme';
 import { Ionicons } from '@expo/vector-icons';
+import { DATA_LAST_UPDATED } from '../components/DataDisclaimer';
 
 export const SettingsScreen = () => {
   const { preferences, updateHomeCountry, updateCurrencyDisplayMode, resetToAutoDetected } = useUserPreferences();
@@ -109,6 +110,21 @@ export const SettingsScreen = () => {
           </Text>
           <Text style={styles.infoText}>
             Visa badges will reflect requirements for {currentCountry?.name} citizens
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Data Sources</Text>
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>
+            Data as of {DATA_LAST_UPDATED}
+          </Text>
+          <Text style={styles.infoText}>
+            Cost of living data sourced from Numbeo. Tax rates reflect current federal, state, and local regulations. Housing prices based on median market data.
+          </Text>
+          <Text style={[styles.infoText, styles.disclaimerNote]}>
+            All figures are estimates for planning purposes.
           </Text>
         </View>
       </View>
@@ -261,6 +277,10 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.sm,
     color: COLORS.darkGray,
     lineHeight: 20,
+  },
+  disclaimerNote: {
+    fontStyle: 'italic',
+    marginTop: SPACING.xs,
   },
   resetButton: {
     flexDirection: 'row',

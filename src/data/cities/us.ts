@@ -5170,6 +5170,72 @@ export const usCities: City[] = [
     languageBarrier: 'none',
     timeZoneOffset: -5,
   },
+  {
+    id: 'richmond-va',
+    name: 'Richmond',
+    state: 'VA',
+    country: 'us',
+    countryCode: 'US',
+    latitude: 37.5407,
+    longitude: -77.4360,
+    costOfLivingIndex: 58, // Numbeo Jan 2026
+    medianRent: 1575, // Zillow Feb 2026
+    medianHomePrice: 371000, // Zillow Feb 2026
+    stateTaxRate: 0.0575,
+    localTaxRate: 0,
+    taxRates: {
+      type: 'us_federal_state',
+      stateTaxRate: 0.0575,
+      localTaxRate: 0,
+    },
+    climate: 'temperate',
+    population: 226610, // US Census
+    crimeIndex: 51, // Numbeo Crime Index: 50.62
+    walkScore: 51, // WalkScore.com
+    transitScore: 64, // WalkScore.com
+    jobGrowthRate: 2.3, // BLS
+    averageCommute: 24,
+    healthcareIndex: 82,
+    educationIndex: 78,
+    entertainmentIndex: 76,
+    outdoorIndex: 78,
+    visaRequired: false,
+    languageBarrier: 'none',
+    timeZoneOffset: -5,
+  },
+  {
+    id: 'fairfax-va',
+    name: 'Fairfax',
+    state: 'VA',
+    country: 'us',
+    countryCode: 'US',
+    latitude: 38.8462,
+    longitude: -77.3064,
+    costOfLivingIndex: 78, // Numbeo Jan 2026 (DC suburb premium)
+    medianRent: 2400, // Zillow/RentCafe Feb 2026 avg
+    medianHomePrice: 680000, // Zillow Feb 2026
+    stateTaxRate: 0.0575,
+    localTaxRate: 0,
+    taxRates: {
+      type: 'us_federal_state',
+      stateTaxRate: 0.0575,
+      localTaxRate: 0,
+    },
+    climate: 'temperate',
+    population: 24019, // US Census 2024
+    crimeIndex: 22, // Numbeo - very low crime area
+    walkScore: 54, // WalkScore.com
+    transitScore: 37, // WalkScore.com - "some transit"
+    jobGrowthRate: 2.8, // BLS - strong tech/gov corridor
+    averageCommute: 32,
+    healthcareIndex: 88,
+    educationIndex: 94,
+    entertainmentIndex: 74,
+    outdoorIndex: 72,
+    visaRequired: false,
+    languageBarrier: 'none',
+    timeZoneOffset: -5,
+  },
 
   // Washington
   {

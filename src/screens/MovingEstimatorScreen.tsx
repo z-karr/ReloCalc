@@ -10,7 +10,7 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADIUS } from '../theme';
+import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { Button, Card, CardHeader, CardContent, Input, Select, SliderInput, CityPicker } from '../components';
 import { HomeSize, MovingMethod, City, MoveType } from '../types';
 import {
@@ -36,9 +36,19 @@ import {
 import { formatCurrency } from '../utils/taxCalculator';
 import { useUserPreferences } from '../context/UserPreferencesContext';
 import { countryUsesMiles } from '../utils/movingCalculator';
+import { getCityById } from '../data/cities';
 
 interface MovingEstimatorScreenProps {
   navigation: any;
+  route?: {
+    params?: {
+      fromFullAnalysis?: boolean;
+      fromCityId?: string;
+      fromCityName?: string;
+      toCityId?: string;
+      toCityName?: string;
+    };
+  };
 }
 
 const HOME_SIZE_OPTIONS = [
@@ -108,7 +118,10 @@ const MOVING_METHOD_INFO: Partial<Record<MovingMethod, { title: string; descript
   },
 };
 
-export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ navigation }) => {
+export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ navigation, route }) => {
+  // Check if coming from Full Analysis
+  const fromFullAnalysis = route?.params?.fromFullAnalysis ?? false;
+  const returnToCityId = route?.params?.toCityId;
   // Get user preferences for distance unit display and currency
   const { preferences } = useUserPreferences();
   const userHomeCountry = preferences?.homeCountry || 'us';
@@ -133,6 +146,28 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
   // Employer relocation assistance
   const [hasEmployerAssistance, setHasEmployerAssistance] = useState(false);
   const [employerPercentage, setEmployerPercentage] = useState(50); // Default to 50%
+
+  // Pre-fill cities when coming from Full Analysis
+  useEffect(() => {
+    if (fromFullAnalysis) {
+      const fromCityId = route?.params?.fromCityId;
+      const toCityId = route?.params?.toCityId;
+
+      if (fromCityId) {
+        const city = getCityById(fromCityId);
+        if (city) {
+          setFromCity(city);
+        }
+      }
+
+      if (toCityId) {
+        const city = getCityById(toCityId);
+        if (city) {
+          setToCity(city);
+        }
+      }
+    }
+  }, [fromFullAnalysis, route?.params?.fromCityId, route?.params?.toCityId]);
 
   // Dismiss disclaimer for this session only (resets when page is reopened)
   const dismissDisclaimer = () => {
@@ -300,6 +335,16 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
     // Show disclaimer for domestic and intra-regional moves (both use regional pricing)
     if (moveType === 'domestic' || moveType === 'intra_regional') {
       setShowDisclaimer(true);
+    }
+  };
+
+  // Handle "Use This Amount" button when coming from Full Analysis
+  const handleUseThisAmount = () => {
+    if (fromFullAnalysis && returnToCityId) {
+      navigation.navigate('FullAnalysis', {
+        returnedMovingCost: displayTotal,
+        forCityId: returnToCityId,
+      });
     }
   };
 
@@ -798,6 +843,21 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
               </View>
             </Card>
 
+            {/* Use This Amount Button - shown when coming from Full Analysis */}
+            {fromFullAnalysis && returnToCityId && (
+              <TouchableOpacity
+                style={styles.useThisAmountButton}
+                onPress={handleUseThisAmount}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="checkmark-circle" size={22} color={COLORS.white} />
+                <Text style={styles.useThisAmountText}>
+                  Use {formatCurrency(displayTotal)} for Full Analysis
+                </Text>
+                <Ionicons name="arrow-forward" size={20} color={COLORS.white} />
+              </TouchableOpacity>
+            )}
+
             {/* Cost Comparison (Domestic Moves Only) */}
             {methodComparisons && methodComparisons.length > 1 && (
               <Card style={styles.comparisonCard}>
@@ -1128,6 +1188,23 @@ const styles = StyleSheet.create({
   },
   totalCard: {
     backgroundColor: COLORS.primary,
+  },
+  useThisAmountButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.success,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    borderRadius: RADIUS.lg,
+    marginBottom: SPACING.base,
+    gap: SPACING.sm,
+    ...SHADOWS.md,
+  },
+  useThisAmountText: {
+    fontSize: FONTS.sizes.md,
+    fontWeight: '700',
+    color: COLORS.white,
   },
   totalContent: {
     alignItems: 'center',

@@ -1,6 +1,9 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
+
+// Web-specific: Check if we're on a large screen (desktop/tablet)
+const isLargeScreen = Platform.OS === 'web' && width > 768;
 
 export const COLORS = {
   // Primary palette - deep midnight to dawn gradient feel
@@ -126,6 +129,21 @@ export const LAYOUT = {
     height,
   },
   isSmallDevice: width < 375,
+  isLargeScreen,
   containerPadding: SPACING.base,
   maxContentWidth: 480,
+  // Web-specific responsive breakpoints
+  web: {
+    maxAppWidth: 480, // Mobile app-like width on desktop
+    containerMaxWidth: 600, // Max width for content containers
+    sidebarWidth: 280, // If we add a sidebar later
+  },
+};
+
+// Web-specific shadow styles (box-shadow instead of elevation)
+export const WEB_SHADOWS = {
+  sm: Platform.OS === 'web' ? { boxShadow: '0 1px 2px rgba(0,0,0,0.05)' } : {},
+  md: Platform.OS === 'web' ? { boxShadow: '0 2px 8px rgba(0,0,0,0.08)' } : {},
+  lg: Platform.OS === 'web' ? { boxShadow: '0 4px 16px rgba(0,0,0,0.12)' } : {},
+  xl: Platform.OS === 'web' ? { boxShadow: '0 8px 24px rgba(0,0,0,0.15)' } : {},
 };

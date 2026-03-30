@@ -7,6 +7,7 @@ import {
   ViewStyle,
   TextInputProps,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,9 +33,21 @@ export const Input: React.FC<InputProps> = ({
   containerStyle,
   prefix,
   suffix,
+  onFocus,
+  onBlur,
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocus = (e: any) => {
+    setIsFocused(true);
+    onFocus?.(e);
+  };
+
+  const handleBlur = (e: any) => {
+    setIsFocused(false);
+    onBlur?.(e);
+  };
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -55,8 +68,8 @@ export const Input: React.FC<InputProps> = ({
             rightIcon ? styles.inputWithRightIcon : null,
           ].filter(Boolean)}
           placeholderTextColor={COLORS.mediumGray}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           {...props}
         />
         {suffix && <Text style={styles.suffix}>{suffix}</Text>}
@@ -130,6 +143,70 @@ interface SliderInputProps {
   valueColor?: string;
 }
 
+// Web-compatible slider component
+const WebSlider: React.FC<{
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+}> = ({ value, min, max, step, onChange }) => {
+  const percentage = ((value - min) / (max - min)) * 100;
+
+  return (
+    <View style={styles.webSliderContainer}>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        style={{
+          width: '100%',
+          height: 40,
+          cursor: 'pointer',
+          WebkitAppearance: 'none',
+          appearance: 'none',
+          background: `linear-gradient(to right, ${COLORS.primary} 0%, ${COLORS.primary} ${percentage}%, ${COLORS.lightGray} ${percentage}%, ${COLORS.lightGray} 100%)`,
+          borderRadius: 8,
+          outline: 'none',
+        }}
+      />
+      <style>{`
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: ${COLORS.primary};
+          cursor: pointer;
+          border: 3px solid white;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: ${COLORS.primary};
+          cursor: pointer;
+          border: 3px solid white;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+          height: 8px;
+          border-radius: 4px;
+        }
+        input[type="range"]::-moz-range-track {
+          height: 8px;
+          border-radius: 4px;
+        }
+      `}</style>
+    </View>
+  );
+};
+
 export const SliderInput: React.FC<SliderInputProps> = ({
   label,
   value,
@@ -162,17 +239,27 @@ export const SliderInput: React.FC<SliderInputProps> = ({
         </Text>
       </View>
       <View style={styles.sliderWrapper}>
-        <Slider
-          style={styles.slider}
-          minimumValue={min}
-          maximumValue={max}
-          step={step}
-          value={value}
-          onValueChange={onChange}
-          minimumTrackTintColor={COLORS.primary}
-          maximumTrackTintColor={COLORS.lightGray}
-          thumbTintColor={COLORS.primary}
-        />
+        {Platform.OS === 'web' ? (
+          <WebSlider
+            value={value}
+            min={min}
+            max={max}
+            step={step}
+            onChange={onChange}
+          />
+        ) : (
+          <Slider
+            style={styles.slider}
+            minimumValue={min}
+            maximumValue={max}
+            step={step}
+            value={value}
+            onValueChange={onChange}
+            minimumTrackTintColor={COLORS.primary}
+            maximumTrackTintColor={COLORS.lightGray}
+            thumbTintColor={COLORS.primary}
+          />
+        )}
       </View>
     </View>
   );
@@ -209,6 +296,7 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.base,
     color: COLORS.charcoal,
     paddingVertical: SPACING.md,
+    paddingLeft: SPACING.sm,
   },
   inputWithLeftIcon: {
     paddingLeft: SPACING.sm,
@@ -296,5 +384,9 @@ const styles = StyleSheet.create({
   slider: {
     width: '100%',
     height: 50,
+  },
+  webSliderContainer: {
+    width: '100%',
+    paddingVertical: SPACING.sm,
   },
 });

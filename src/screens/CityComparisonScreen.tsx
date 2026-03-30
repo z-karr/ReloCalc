@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
-import { Card, CityPicker } from '../components';
+import { Card, CityPicker, ScrollIndicator, DataDisclaimer } from '../components';
 import { City } from '../types';
 import { getRegionalTaxLabel } from '../utils/taxLabels';
 import { calculateSalary } from '../utils/taxCalculator';
@@ -99,6 +101,15 @@ const MetricRow: React.FC<MetricRowProps> = ({
 export const CityComparisonScreen: React.FC<CityComparisonScreenProps> = ({ navigation }) => {
   const [city1, setCity1] = useState<City | null>(null);
   const [city2, setCity2] = useState<City | null>(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+
+  // Hide scroll indicator once user starts scrolling
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    if (scrollY > 20 && showScrollIndicator) {
+      setShowScrollIndicator(false);
+    }
+  }, [showScrollIndicator]);
 
   const formatCurrency = (value: number): string => {
     return `$${value.toLocaleString()}`;
@@ -122,34 +133,40 @@ export const CityComparisonScreen: React.FC<CityComparisonScreenProps> = ({ navi
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* City Selectors */}
-        <View style={styles.selectorContainer}>
-          <View style={styles.citySelector}>
-            <CityPicker
-              label="City 1"
-              value={city1}
-              onChange={setCity1}
-              placeholder="Select first city"
-            />
+      <View style={styles.scrollContainer}>
+        <ScrollView
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
+          {/* City Selectors */}
+          <View style={styles.selectorContainer}>
+            <View style={styles.citySelector}>
+              <CityPicker
+                label="City 1"
+                value={city1}
+                onChange={setCity1}
+                placeholder="Select first city"
+              />
+            </View>
+            <View style={styles.vsIcon}>
+              <Text style={styles.vsText}>VS</Text>
+            </View>
+            <View style={styles.citySelector}>
+              <CityPicker
+                label="City 2"
+                value={city2}
+                onChange={setCity2}
+                placeholder="Select second city"
+              />
+            </View>
           </View>
-          <View style={styles.vsIcon}>
-            <Text style={styles.vsText}>VS</Text>
-          </View>
-          <View style={styles.citySelector}>
-            <CityPicker
-              label="City 2"
-              value={city2}
-              onChange={setCity2}
-              placeholder="Select second city"
-            />
-          </View>
-        </View>
 
-        {city1 && city2 ? (
-          <>
-            {/* City Headers */}
-            <View style={styles.cityHeaders}>
+          {city1 && city2 ? (
+            <>
+              {/* City Headers */}
+              <View style={styles.cityHeaders}>
               <View style={[styles.cityHeader, { backgroundColor: COLORS.primary + '10' }]}>
                 <Text style={styles.cityHeaderName}>{city1.name}</Text>
                 <Text style={styles.cityHeaderState}>
@@ -367,7 +384,7 @@ export const CityComparisonScreen: React.FC<CityComparisonScreenProps> = ({ navi
             </Card>
 
             {/* Winner Summary */}
-            <Card style={[styles.section, styles.summaryCard]}>
+            <Card style={StyleSheet.flatten([styles.section, styles.summaryCard])}>
               <View style={styles.summaryHeader}>
                 <Ionicons name="trophy-outline" size={28} color={COLORS.warning} />
                 <Text style={styles.summaryTitle}>Quick Summary</Text>
@@ -401,6 +418,11 @@ export const CityComparisonScreen: React.FC<CityComparisonScreenProps> = ({ navi
                 </Text>
               </View>
             </Card>
+
+            {/* Data Disclaimer */}
+            <View style={styles.disclaimerContainer}>
+              <DataDisclaimer variant="inline" />
+            </View>
           </>
         ) : (
           <Card style={styles.emptyState}>
@@ -413,8 +435,14 @@ export const CityComparisonScreen: React.FC<CityComparisonScreenProps> = ({ navi
           </Card>
         )}
 
-        <View style={styles.footer} />
-      </ScrollView>
+          <View style={styles.footer} />
+        </ScrollView>
+
+        {/* Scroll indicator - shows when cities are selected and user hasn't scrolled yet */}
+        {city1 && city2 && (
+          <ScrollIndicator visible={showScrollIndicator} />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -423,6 +451,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: COLORS.white,
+  },
+  scrollContainer: {
+    flex: 1,
+    position: 'relative',
   },
   container: {
     flex: 1,
@@ -680,5 +712,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: SPACING.xxxl,
+  },
+  disclaimerContainer: {
+    marginHorizontal: SPACING.base,
+    marginTop: SPACING.md,
   },
 });

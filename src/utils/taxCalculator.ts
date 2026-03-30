@@ -126,10 +126,8 @@ function calculateTaxes(grossSalary: number, taxRates: TaxRateInfo): {
     case 'vat_based':
       return calculateVATBasedTaxes(grossSalary, taxRates);
 
-    case 'territorial':
-    case 'hybrid':
-      // Simplified calculation for complex systems
-      return calculateProgressiveTaxes(grossSalary, taxRates);
+    // Note: 'territorial' and 'hybrid' types are handled by the default case
+    // when/if they are added to TaxRateInfo union type in the future
 
     default:
       // Fallback to progressive

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, TouchableOpacity, Platform } from 'react-native';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 
 interface CardProps {
@@ -108,9 +108,16 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.lg,
     padding: SPACING.base,
     ...SHADOWS.md,
+    // Web-specific: use box-shadow for better rendering
+    ...(Platform.OS === 'web' && {
+      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    }),
   },
   elevated: {
     ...SHADOWS.lg,
+    ...(Platform.OS === 'web' && {
+      boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+    }),
   },
   outlined: {
     backgroundColor: COLORS.white,
