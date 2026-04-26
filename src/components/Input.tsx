@@ -272,16 +272,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
+    letterSpacing: 0.1,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: COLORS.lightGray,
     paddingHorizontal: SPACING.md,
   },
   inputContainerFocused: {
@@ -339,9 +340,9 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.md,
     borderRadius: RADIUS.md,
-    backgroundColor: COLORS.offWhite,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    backgroundColor: COLORS.white,
+    borderWidth: 1.5,
+    borderColor: COLORS.lightGray,
   },
   selectOptionActive: {
     backgroundColor: COLORS.primary,
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   sliderValue: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   sliderWrapper: {
     paddingVertical: SPACING.md,

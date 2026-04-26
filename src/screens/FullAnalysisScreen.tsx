@@ -15,6 +15,7 @@ import {
   Platform,
   Modal,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
@@ -33,7 +34,7 @@ import { RentVsBuyCard } from '../components/premium/RentVsBuyCard';
 import { ScenarioComparison } from '../components/premium/ScenarioComparison';
 import { NegotiationToolkit } from '../components/premium/NegotiationToolkit';
 import { ChecklistSection } from '../components/premium/ChecklistSection';
-import { QuickExportButton } from '../components/premium/ExportButton';
+import { PDFReportData, generateAndSharePDF, printPDFReport } from '../utils/premium/pdfGenerator';
 import { MultiCitySummaryGrid } from '../components/premium/MultiCitySummaryGrid';
 import { CityDetailSelector } from '../components/premium/CityDetailSelector';
 
@@ -71,7 +72,7 @@ interface TargetCity {
   salary: string;
 }
 
-type TabId = 'overview' | 'projections' | 'housing' | 'negotiate' | 'checklist';
+type TabId = 'overview' | 'projections' | 'housing' | 'negotiate' | 'checklist' | 'export';
 
 interface TabConfig {
   id: TabId;
@@ -90,16 +91,23 @@ const TABS: TabConfig[] = [
   { id: 'housing', label: 'Housing', icon: 'home-outline', premiumOnly: true },
   { id: 'negotiate', label: 'Negotiate', icon: 'briefcase-outline', premiumOnly: true },
   { id: 'checklist', label: 'Checklist', icon: 'checkbox-outline', premiumOnly: true },
+  { id: 'export', label: 'Export', icon: 'download-outline', premiumOnly: true },
 ];
 
 const MAX_FREE_CITIES = 1;
 const MAX_PREMIUM_CITIES = 5;
 const FORM_STATE_STORAGE_KEY = '@FullAnalysis:formState';
+const SAVED_INPUTS_KEY = '@FullAnalysis:savedInputs';
+const ONBOARDING_SEEN_KEY = '@FullAnalysis:onboardingSeen';
+const SAVED_CHECKLISTS_KEY = '@FullAnalysis:savedChecklists';
 
-// Helper to parse salary string with commas to number
+// Helper to parse currency string to whole-dollar number
+// Handles commas, dollar signs, and decimals (e.g., "7,149.186" → 7149)
 const parseSalary = (value: string): number => {
-  const cleaned = value.replace(/[^0-9]/g, '');
-  return parseInt(cleaned, 10) || 0;
+  // Strip dollar signs and commas, then parse as float to handle decimals correctly
+  const cleaned = value.replace(/[$,]/g, '');
+  const num = parseFloat(cleaned);
+  return isNaN(num) ? 0 : Math.round(num);
 };
 
 // ============================================================================
@@ -152,8 +160,12 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [showCircumstances, setShowCircumstances] = useState(false);
   const [checklist, setChecklist] = useState<any>(null);
+  const [savedChecklists, setSavedChecklists] = useState<Record<string, any>>({});
+  const [showChecklistInfo, setShowChecklistInfo] = useState(false);
   const [showCalculationInfo, setShowCalculationInfo] = useState(false);
   const [showProjectionInfo, setShowProjectionInfo] = useState(false);
+  const [showOnboardingNudge, setShowOnboardingNudge] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Selected city for detailed analysis (index into validTargetCities)
   const [selectedDetailCityIndex, setSelectedDetailCityIndex] = useState(0);
@@ -161,6 +173,105 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
   // ============================================================================
   // EFFECTS
   // ============================================================================
+
+  // Restore saved inputs on mount (for returning users)
+  useEffect(() => {
+    const restoreSavedInputs = async () => {
+      // Don't restore if we're returning from the moving estimator (that has its own flow)
+      if (route?.params?.returnedMovingCost !== undefined) return;
+
+      try {
+        const saved = await AsyncStorage.getItem(SAVED_INPUTS_KEY);
+        if (!saved) return;
+
+        const parsed = JSON.parse(saved);
+        if (parsed.currentCity) setCurrentCity(parsed.currentCity);
+        if (parsed.currentSalary) setCurrentSalary(parsed.currentSalary);
+        if (parsed.targetCities) setTargetCities(parsed.targetCities);
+        if (parsed.movingCosts) setMovingCosts(parsed.movingCosts);
+        if (parsed.moveDate) setMoveDate(new Date(parsed.moveDate));
+        if (parsed.hasPets !== undefined) setHasPets(parsed.hasPets);
+        if (parsed.hasChildren !== undefined) setHasChildren(parsed.hasChildren);
+        if (parsed.isHomeowner !== undefined) setIsHomeowner(parsed.isHomeowner);
+        if (parsed.householdSize) setHouseholdSize(parsed.householdSize);
+        if (parsed.houseHuntingTrips) setHouseHuntingTrips(parsed.houseHuntingTrips);
+        if (parsed.tempHousingDays) setTempHousingDays(parsed.tempHousingDays);
+        if (parsed.plansToBuy !== undefined) setPlansToBuy(parsed.plansToBuy);
+        if (parsed.downPaymentPercent) setDownPaymentPercent(parsed.downPaymentPercent);
+        if (parsed.targetHomePrice) setTargetHomePrice(parsed.targetHomePrice);
+        if (parsed.mortgageRate) setMortgageRate(parsed.mortgageRate);
+        if (parsed.travelModeOverrides) setTravelModeOverrides(parsed.travelModeOverrides);
+        if (parsed.showResults) setShowResults(true);
+      } catch (error) {
+        console.error('Failed to restore saved inputs:', error);
+      }
+    };
+    restoreSavedInputs();
+  }, []);
+
+  // Auto-save inputs whenever they change (debounced via the dependency array)
+  useEffect(() => {
+    // Don't save until the user has at least entered a current city
+    if (!currentCity) return;
+
+    const saveInputs = async () => {
+      try {
+        const inputs = {
+          currentCity,
+          currentSalary,
+          targetCities,
+          movingCosts,
+          moveDate: moveDate.toISOString(),
+          hasPets,
+          hasChildren,
+          isHomeowner,
+          householdSize,
+          houseHuntingTrips,
+          tempHousingDays,
+          plansToBuy,
+          downPaymentPercent,
+          targetHomePrice,
+          mortgageRate,
+          travelModeOverrides,
+          showResults,
+        };
+        await AsyncStorage.setItem(SAVED_INPUTS_KEY, JSON.stringify(inputs));
+      } catch (error) {
+        console.error('Failed to save inputs:', error);
+      }
+    };
+    saveInputs();
+  }, [
+    currentCity, currentSalary, targetCities, movingCosts, moveDate,
+    hasPets, hasChildren, isHomeowner, householdSize, houseHuntingTrips,
+    tempHousingDays, plansToBuy, downPaymentPercent, targetHomePrice,
+    mortgageRate, travelModeOverrides, showResults,
+  ]);
+
+  // Restore saved checklists on mount
+  useEffect(() => {
+    const restoreSavedChecklists = async () => {
+      try {
+        const saved = await AsyncStorage.getItem(SAVED_CHECKLISTS_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          // Convert date strings back to Date objects
+          for (const key of Object.keys(parsed)) {
+            const cl = parsed[key];
+            cl.moveDate = new Date(cl.moveDate);
+            cl.items = cl.items.map((item: any) => ({
+              ...item,
+              completedDate: item.completedDate ? new Date(item.completedDate) : undefined,
+            }));
+          }
+          setSavedChecklists(parsed);
+        }
+      } catch (error) {
+        console.error('Failed to restore saved checklists:', error);
+      }
+    };
+    restoreSavedChecklists();
+  }, []);
 
   // Restore form state and apply returned moving cost when returning from Moving Estimator
   useEffect(() => {
@@ -296,11 +407,12 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
     setShowPaywall(true);
   }, []);
 
-  // Format salary with commas (e.g., 80000 -> 80,000)
+  // Format currency with commas, no decimals (e.g., "7149.186" -> "7,149")
   const formatSalaryValue = useCallback((value: string): string => {
-    const cleaned = value.replace(/[^0-9]/g, '');
+    const cleaned = value.replace(/[$,]/g, '');
     if (cleaned === '') return '';
-    const num = parseInt(cleaned, 10);
+    const num = Math.round(parseFloat(cleaned));
+    if (isNaN(num)) return '';
     return num.toLocaleString('en-US');
   }, []);
 
@@ -562,6 +674,24 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
     householdSize, houseHuntingTrips, tempHousingDays, travelModeOverrides
   ]);
 
+  // Show onboarding nudge on first analysis view
+  useEffect(() => {
+    if (showResults && analysis && isPremium) {
+      const checkOnboarding = async () => {
+        try {
+          const seen = await AsyncStorage.getItem(ONBOARDING_SEEN_KEY);
+          if (!seen) {
+            setShowOnboardingNudge(true);
+            await AsyncStorage.setItem(ONBOARDING_SEEN_KEY, 'true');
+          }
+        } catch (e) {
+          // Silently fail
+        }
+      };
+      checkOnboarding();
+    }
+  }, [showResults, analysis]);
+
   // ============================================================================
   // FORMATTERS
   // ============================================================================
@@ -672,7 +802,13 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
       <View style={styles.divider} />
 
       {/* Per-City Moving Costs */}
-      <Text style={styles.sectionLabel}>Estimated Moving Costs</Text>
+      <View style={styles.sectionLabelRow}>
+        <Ionicons name="cube-outline" size={18} color={COLORS.primary} />
+        <Text style={styles.sectionLabel}>Estimated Moving Costs</Text>
+        {targetCities.some(t => t.city) && (
+          <Text style={styles.calculatorHintText}>Not sure? Use the calculators below</Text>
+        )}
+      </View>
       {targetCities.map((target, index) => {
         if (!target.city) return null;
         const cityId = target.city.id;
@@ -705,30 +841,20 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
           </View>
         );
       })}
-      {targetCities.some(t => t.city) && (
-        <TouchableOpacity
-          style={styles.calculatorLink}
-          onPress={() => navigation.navigate('MovingEstimator' as never)}
-        >
-          <Ionicons name="calculator-outline" size={14} color={COLORS.primary} />
-          <Text style={styles.calculatorLinkText}>Not sure? Use our calculator</Text>
-          <Ionicons name="chevron-forward" size={14} color={COLORS.primary} />
-        </TouchableOpacity>
-      )}
 
       {/* Circumstances Toggle */}
       <TouchableOpacity
         style={styles.circumstancesToggle}
         onPress={() => setShowCircumstances(!showCircumstances)}
       >
-        <Ionicons name="options-outline" size={20} color={COLORS.darkGray} />
+        <Ionicons name="options-outline" size={18} color={COLORS.mediumGray} />
         <Text style={styles.circumstancesToggleText}>
           {showCircumstances ? 'Hide' : 'Show'} Additional Options
         </Text>
         <Ionicons
           name={showCircumstances ? 'chevron-up' : 'chevron-down'}
-          size={20}
-          color={COLORS.darkGray}
+          size={18}
+          color={COLORS.mediumGray}
         />
       </TouchableOpacity>
 
@@ -736,13 +862,13 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
         <View style={styles.circumstancesSection}>
           {/* Housing Intent Section */}
           <View style={styles.optionsSectionHeader}>
-            <Ionicons name="home" size={16} color={COLORS.primary} />
+            <Ionicons name="home" size={16} color={COLORS.accent} />
             <Text style={styles.optionsSectionTitle}>Housing Plan</Text>
           </View>
 
           <View style={styles.switchRow}>
             <View style={styles.switchLabel}>
-              <Ionicons name="key-outline" size={18} color={COLORS.darkGray} />
+              <Ionicons name="key-outline" size={18} color={COLORS.mediumGray} />
               <Text style={styles.switchText}>I plan to buy a home in my new city</Text>
             </View>
             <Switch value={plansToBuy} onValueChange={setPlansToBuy} />
@@ -805,13 +931,13 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
 
           {/* Personal Circumstances Section */}
           <View style={styles.optionsSectionHeader}>
-            <Ionicons name="person" size={16} color={COLORS.primary} />
+            <Ionicons name="person" size={16} color={COLORS.secondary} />
             <Text style={styles.optionsSectionTitle}>Personal Circumstances</Text>
           </View>
 
           <View style={styles.switchRow}>
             <View style={styles.switchLabel}>
-              <Ionicons name="paw-outline" size={18} color={COLORS.darkGray} />
+              <Ionicons name="paw-outline" size={18} color={COLORS.mediumGray} />
               <Text style={styles.switchText}>I have pets</Text>
             </View>
             <Switch value={hasPets} onValueChange={setHasPets} />
@@ -819,7 +945,7 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
 
           <View style={styles.switchRow}>
             <View style={styles.switchLabel}>
-              <Ionicons name="people-outline" size={18} color={COLORS.darkGray} />
+              <Ionicons name="people-outline" size={18} color={COLORS.mediumGray} />
               <Text style={styles.switchText}>I have children</Text>
             </View>
             <Switch value={hasChildren} onValueChange={setHasChildren} />
@@ -827,7 +953,7 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
 
           <View style={styles.switchRow}>
             <View style={styles.switchLabel}>
-              <Ionicons name="home-outline" size={18} color={COLORS.darkGray} />
+              <Ionicons name="home-outline" size={18} color={COLORS.mediumGray} />
               <Text style={styles.switchText}>I currently own a home</Text>
             </View>
             <Switch value={isHomeowner} onValueChange={setIsHomeowner} />
@@ -839,7 +965,7 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
           {validTargetCities.length > 0 && currentCity && (
             <View style={styles.autoDetectedSection}>
               <View style={styles.optionsSectionHeader}>
-                <Ionicons name="sparkles" size={16} color={COLORS.primary} />
+                <Ionicons name="sparkles" size={16} color={COLORS.info} />
                 <Text style={styles.optionsSectionTitle}>Auto-Detected Move Details</Text>
               </View>
 
@@ -900,7 +1026,7 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
                       <Ionicons
                         name="swap-horizontal"
                         size={18}
-                        color={COLORS.primary}
+                        color={COLORS.info}
                       />
                     </View>
                   </TouchableOpacity>
@@ -917,7 +1043,7 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
 
           {/* Household & Relocation Details Section */}
           <View style={styles.optionsSectionHeader}>
-            <Ionicons name="people" size={16} color={COLORS.primary} />
+            <Ionicons name="people" size={16} color={COLORS.info} />
             <Text style={styles.optionsSectionTitle}>Household & Relocation Details</Text>
           </View>
 
@@ -998,21 +1124,19 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
           return (
             <TouchableOpacity
               key={tab.id}
-              style={[styles.tab, isActive && styles.tabActive]}
-              onPress={() => handleTabPress(tab)}
+              style={[styles.tab, isActive && styles.tabActive, isLocked && styles.tabLocked]}
+              onPress={() => !isLocked && handleTabPress(tab)}
+              activeOpacity={isLocked ? 1 : 0.7}
             >
               <View style={styles.tabContent}>
                 <Ionicons
-                  name={tab.icon}
-                  size={18}
-                  color={isActive ? COLORS.primary : COLORS.mediumGray}
+                  name={isLocked ? 'lock-closed' : tab.icon}
+                  size={isLocked ? 14 : 18}
+                  color={isLocked ? COLORS.accent : isActive ? COLORS.primary : COLORS.mediumGray}
                 />
-                <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+                <Text style={[styles.tabLabel, isActive && styles.tabLabelActive, isLocked && styles.tabLabelLocked]}>
                   {tab.label}
                 </Text>
-                {isLocked && (
-                  <Ionicons name="lock-closed" size={12} color={COLORS.accent} />
-                )}
               </View>
             </TouchableOpacity>
           );
@@ -1181,58 +1305,91 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
           </View>
         </Card>
 
-        {/* Premium Teasers (for free users) */}
+        {/* Premium Upsell (for free users) */}
         {!isPremium && (
-          <Card style={styles.upsellCard}>
-            <View style={styles.upsellHeader}>
-              <Ionicons name="sparkles" size={24} color={COLORS.accent} />
-              <Text style={styles.upsellTitle}>Unlock Full Analysis</Text>
+          <View style={styles.upsellCard}>
+            <View style={styles.upsellSparkleRow}>
+              <Ionicons name="sparkles" size={18} color={COLORS.accent} />
+              <Ionicons name="sparkles" size={12} color={COLORS.accentLight} />
             </View>
+
+            <Text style={styles.upsellTitle}>See the Full Picture</Text>
+            <Text style={styles.upsellSubtitle}>
+              Your data is ready — unlock the complete analysis to make your move with confidence.
+            </Text>
 
             <View style={styles.upsellBenefits}>
               <View style={styles.upsellBenefitRow}>
-                <Ionicons name="trending-up" size={18} color={COLORS.success} />
-                <Text style={styles.upsellBenefitText}>5-Year Financial Projections</Text>
+                <View style={[styles.upsellBenefitIcon, { backgroundColor: '#D4EDDA' }]}>
+                  <Ionicons name="trending-up" size={16} color={COLORS.success} />
+                </View>
+                <View style={styles.upsellBenefitContent}>
+                  <Text style={styles.upsellBenefitTitle}>5-Year Financial Projections</Text>
+                  <Text style={styles.upsellBenefitDesc}>See exactly how your net worth grows in each city</Text>
+                </View>
               </View>
               <View style={styles.upsellBenefitRow}>
-                <Ionicons name="home" size={18} color={COLORS.info} />
-                <Text style={styles.upsellBenefitText}>Rent vs Buy Analysis</Text>
+                <View style={[styles.upsellBenefitIcon, { backgroundColor: '#D1ECF1' }]}>
+                  <Ionicons name="home" size={16} color={COLORS.info} />
+                </View>
+                <View style={styles.upsellBenefitContent}>
+                  <Text style={styles.upsellBenefitTitle}>Rent vs. Buy Analysis</Text>
+                  <Text style={styles.upsellBenefitDesc}>Data-driven housing recommendation with 10-year comparison</Text>
+                </View>
               </View>
               <View style={styles.upsellBenefitRow}>
-                <Ionicons name="briefcase" size={18} color={COLORS.warning} />
-                <Text style={styles.upsellBenefitText}>Employer Negotiation Toolkit</Text>
+                <View style={[styles.upsellBenefitIcon, { backgroundColor: '#FFF3CD' }]}>
+                  <Ionicons name="briefcase" size={16} color="#856404" />
+                </View>
+                <View style={styles.upsellBenefitContent}>
+                  <Text style={styles.upsellBenefitTitle}>Negotiation Toolkit</Text>
+                  <Text style={styles.upsellBenefitDesc}>Ready-to-use scripts and talking points for your employer</Text>
+                </View>
               </View>
               <View style={styles.upsellBenefitRow}>
-                <Ionicons name="checkbox" size={18} color={COLORS.primary} />
-                <Text style={styles.upsellBenefitText}>90-Day Moving Checklist</Text>
+                <View style={[styles.upsellBenefitIcon, { backgroundColor: '#D6E4F0' }]}>
+                  <Ionicons name="checkbox" size={16} color={COLORS.primary} />
+                </View>
+                <View style={styles.upsellBenefitContent}>
+                  <Text style={styles.upsellBenefitTitle}>90-Day Moving Checklist</Text>
+                  <Text style={styles.upsellBenefitDesc}>Personalized step-by-step plan tailored to your move</Text>
+                </View>
               </View>
               <View style={styles.upsellBenefitRow}>
-                <Ionicons name="document-text" size={18} color={COLORS.secondary} />
-                <Text style={styles.upsellBenefitText}>Exportable PDF Report</Text>
+                <View style={[styles.upsellBenefitIcon, { backgroundColor: '#E0F0E9' }]}>
+                  <Ionicons name="download" size={16} color={COLORS.secondary} />
+                </View>
+                <View style={styles.upsellBenefitContent}>
+                  <Text style={styles.upsellBenefitTitle}>Exportable PDF Report</Text>
+                  <Text style={styles.upsellBenefitDesc}>Share with your partner, realtor, or financial advisor</Text>
+                </View>
               </View>
             </View>
+
+            <View style={styles.upsellDivider} />
 
             <View style={styles.upsellPriceRow}>
               <Text style={styles.upsellPrice}>$3.99</Text>
-              <View style={styles.upsellBadge}>
-                <Text style={styles.upsellBadgeText}>One-time purchase</Text>
+              <View style={styles.upsellPriceBadge}>
+                <Text style={styles.upsellPriceBadgeText}>ONE-TIME</Text>
               </View>
             </View>
 
-            <View style={styles.upsellValueNote}>
-              <Ionicons name="gift-outline" size={14} color={COLORS.success} />
-              <Text style={styles.upsellValueNoteText}>
-                Relocation consultants charge $200+ for similar reports
-              </Text>
-            </View>
+            <Text style={styles.upsellValueNote}>
+              Relocation consultants charge $200+ for similar reports
+            </Text>
 
-            <Button
-              title="Unlock Premium"
+            <TouchableOpacity
+              style={styles.upsellCTA}
               onPress={() => triggerPaywall('Full Analysis')}
-              variant="primary"
-              icon={<Ionicons name="lock-open" size={18} color={COLORS.white} />}
-            />
-          </Card>
+              activeOpacity={0.85}
+            >
+              <Ionicons name="lock-open" size={20} color={COLORS.white} />
+              <Text style={styles.upsellCTAText}>Unlock Full Analysis</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.upsellFootnote}>No subscription. Pay once, keep forever.</Text>
+          </View>
         )}
 
         {/* Recommendation */}
@@ -1428,28 +1585,6 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
     const displayAnalysis = selectedCityAnalysis || analysis.allCityAnalyses[0];
     const hasMultipleCities = analysis.allCityAnalyses.length > 1;
 
-    const reportData = {
-      currentCity: currentCity!,
-      currentSalary: parseSalary(currentSalary),
-      cities: validTargetCities.map(t => t.city!),
-      salaries: validTargetCities.map(t => parseSalary(t.salary)),
-      movingCosts: validTargetCities.map(t => parseSalary(movingCosts[t.city!.id] || '0')),
-      breakEvenAnalysis: displayAnalysis.breakEven,
-      rentVsBuyAnalyses: { [displayAnalysis.city.name]: displayAnalysis.rentVsBuy },
-      negotiationToolkit: displayAnalysis.negotiation,
-      projections: {
-        [currentCity!.name]: analysis.currentProjection,
-        [displayAnalysis.city.name]: displayAnalysis.projection,
-      },
-      generatedDate: new Date(),
-      // Housing intent and additional options
-      housingIntent: analysis.housingIntent,
-      isInternational: displayAnalysis.city.country !== currentCity!.country,
-      hasPets,
-      hasChildren,
-      isHomeowner,
-    };
-
     return (
       <View style={styles.tabPane}>
         {/* City Selector */}
@@ -1472,46 +1607,190 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
           plansToBuy={analysis.housingIntent.plansToBuy}
         />
 
-        {/* Export Button */}
-        <Card style={styles.section}>
-          <QuickExportButton reportData={reportData} />
-        </Card>
-
         <DataDisclaimer variant="inline" />
       </View>
     );
   };
+
+  const handleChecklistUpdate = useCallback(async (updatedChecklist: any) => {
+    setChecklist(updatedChecklist);
+
+    // Persist to savedChecklists and AsyncStorage
+    const displayAnalysis = selectedCityAnalysis || analysis?.allCityAnalyses[0];
+    if (displayAnalysis) {
+      const cityId = displayAnalysis.city.id;
+      const updated = { ...savedChecklists, [cityId]: updatedChecklist };
+      setSavedChecklists(updated);
+      try {
+        await AsyncStorage.setItem(SAVED_CHECKLISTS_KEY, JSON.stringify(updated));
+      } catch (error) {
+        console.error('Failed to save checklist:', error);
+      }
+    }
+  }, [selectedCityAnalysis, analysis, savedChecklists]);
 
   const renderChecklistTab = () => {
     if (!analysis || !isPremium) return null;
 
     const displayAnalysis = selectedCityAnalysis || analysis.allCityAnalyses[0];
     const hasMultipleCities = analysis.allCityAnalyses.length > 1;
+    const cityId = displayAnalysis.city.id;
 
-    // Use local checklist state if it exists, otherwise use the calculated one for selected city
-    const currentChecklist = checklist || displayAnalysis.checklist;
+    // Priority: local edit state > saved persistent checklist > freshly generated
+    const currentChecklist = checklist || savedChecklists[cityId] || displayAnalysis.checklist;
 
     return (
       <View style={styles.tabPane}>
-        {/* City Selector */}
-        {hasMultipleCities && (
-          <CityDetailSelector
-            cities={targetCitiesForSelector}
-            selectedIndex={selectedDetailCityIndex}
-            onSelectCity={(index) => {
-              setSelectedDetailCityIndex(index);
-              // Reset local checklist when switching cities
-              setChecklist(null);
-            }}
-            label="View Checklist For"
-          />
-        )}
+        {/* City Selector + Info Button Row */}
+        <View style={styles.checklistTopRow}>
+          <View style={styles.checklistTopRowLeft}>
+            {hasMultipleCities && (
+              <CityDetailSelector
+                cities={targetCitiesForSelector}
+                selectedIndex={selectedDetailCityIndex}
+                onSelectCity={(index) => {
+                  setSelectedDetailCityIndex(index);
+                  // Reset local checklist — will fall back to saved or generated
+                  setChecklist(null);
+                }}
+                label="View Checklist For"
+              />
+            )}
+          </View>
+          <TouchableOpacity
+            onPress={() => setShowChecklistInfo(true)}
+            style={styles.checklistInfoButton}
+          >
+            <Ionicons name="information-circle-outline" size={22} color={COLORS.primary} />
+          </TouchableOpacity>
+        </View>
 
         <ChecklistSection
           checklist={currentChecklist}
-          onChecklistUpdate={setChecklist}
+          onChecklistUpdate={handleChecklistUpdate}
+          showInfo={showChecklistInfo}
+          onCloseInfo={() => setShowChecklistInfo(false)}
         />
         <DataDisclaimer variant="inline" />
+      </View>
+    );
+  };
+
+  const buildReportData = (): PDFReportData | null => {
+    if (!analysis || !currentCity) return null;
+    return {
+      currentCity,
+      currentSalary: parseSalary(currentSalary),
+      currentProjection: analysis.currentProjection,
+      allCityAnalyses: analysis.allCityAnalyses.map((a: any) => ({
+        city: a.city,
+        salary: a.salary,
+        movingCost: parseSalary(movingCosts[a.city.id] || '0'),
+        breakEven: a.breakEven,
+        projection: a.projection,
+        rentVsBuy: a.rentVsBuy,
+        negotiation: a.negotiation,
+        checklist: a.checklist,
+        moveClassification: a.moveClassification,
+        isPositive: a.isPositive,
+      })),
+      housingIntent: analysis.housingIntent,
+      householdSize: analysis.householdSizeNum,
+      houseHuntingTrips: parseInt(houseHuntingTrips, 10) || 2,
+      tempHousingDays,
+      moveDate,
+      hasPets,
+      hasChildren,
+      isHomeowner,
+      savedChecklists,
+      generatedDate: new Date(),
+    };
+  };
+
+  const renderExportTab = () => {
+    if (!analysis || !isPremium) return null;
+
+    const reportData = buildReportData();
+    if (!reportData) return null;
+
+    return (
+      <View style={styles.tabPane}>
+        <Card style={styles.exportCard}>
+          <View style={styles.exportHeader}>
+            <Ionicons name="document-text-outline" size={40} color={COLORS.primary} />
+            <Text style={styles.exportTitle}>Export Full Analysis</Text>
+            <Text style={styles.exportDescription}>
+              Download a comprehensive PDF report containing all of your analysis data — overview, projections, housing analysis, negotiation toolkit, and your personalized moving checklist.
+            </Text>
+          </View>
+
+          <View style={styles.exportFeatures}>
+            <View style={styles.exportFeatureItem}>
+              <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
+              <Text style={styles.exportFeatureText}>All city comparisons & metrics</Text>
+            </View>
+            <View style={styles.exportFeatureItem}>
+              <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
+              <Text style={styles.exportFeatureText}>5-year financial projections</Text>
+            </View>
+            <View style={styles.exportFeatureItem}>
+              <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
+              <Text style={styles.exportFeatureText}>Rent vs. buy analysis</Text>
+            </View>
+            <View style={styles.exportFeatureItem}>
+              <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
+              <Text style={styles.exportFeatureText}>Negotiation scripts & talking points</Text>
+            </View>
+            <View style={styles.exportFeatureItem}>
+              <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
+              <Text style={styles.exportFeatureText}>Personalized moving checklist</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.exportButton, isExporting && styles.exportButtonDisabled]}
+            onPress={async () => {
+              if (isExporting) return;
+              setIsExporting(true);
+              try {
+                await printPDFReport(reportData);
+              } catch (error) {
+                console.error('Export failed:', error);
+              } finally {
+                setIsExporting(false);
+              }
+            }}
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <ActivityIndicator size="small" color={COLORS.white} />
+            ) : (
+              <Ionicons name="download-outline" size={22} color={COLORS.white} />
+            )}
+            <Text style={styles.exportButtonText}>
+              {isExporting ? 'Generating Report...' : 'Save as PDF'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.exportButtonSecondary, isExporting && styles.exportButtonDisabled]}
+            onPress={async () => {
+              if (isExporting) return;
+              setIsExporting(true);
+              try {
+                await generateAndSharePDF(reportData);
+              } catch (error) {
+                console.error('Preview failed:', error);
+              } finally {
+                setIsExporting(false);
+              }
+            }}
+            disabled={isExporting}
+          >
+            <Ionicons name="eye-outline" size={20} color={COLORS.primary} />
+            <Text style={styles.exportButtonSecondaryText}>Preview Report</Text>
+          </TouchableOpacity>
+        </Card>
       </View>
     );
   };
@@ -1528,6 +1807,8 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
         return renderNegotiateTab();
       case 'checklist':
         return renderChecklistTab();
+      case 'export':
+        return renderExportTab();
       default:
         return renderOverviewTab();
     }
@@ -1753,6 +2034,38 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
           </View>
         </View>
       </Modal>
+
+      {/* Onboarding Nudge Modal */}
+      <Modal
+        visible={showOnboardingNudge}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowOnboardingNudge(false)}
+      >
+        <View style={styles.onboardingOverlay}>
+          <View style={styles.onboardingCard}>
+            <View style={styles.onboardingIconRow}>
+              <View style={styles.onboardingIconCircle}>
+                <Ionicons name="information-circle-outline" size={32} color={COLORS.primary} />
+              </View>
+            </View>
+            <Text style={styles.onboardingTitle}>Welcome to Your Full Analysis</Text>
+            <Text style={styles.onboardingText}>
+              Look for the{' '}
+              <Ionicons name="information-circle-outline" size={16} color={COLORS.primary} />
+              {' '}icons throughout each section of your analysis. Tap them anytime for a detailed explanation of what you're looking at and how to use the data.
+              {'\n\n'}
+              When you're ready, head to the Export tab to download your complete analysis as a PDF — perfect for sharing with a partner, realtor, financial advisor, or employer during negotiations.
+            </Text>
+            <TouchableOpacity
+              style={styles.onboardingButton}
+              onPress={() => setShowOnboardingNudge(false)}
+            >
+              <Text style={styles.onboardingButtonText}>Got It, Let's Go</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -1764,11 +2077,11 @@ export const FullAnalysisScreen: React.FC<FullAnalysisScreenProps> = ({ navigati
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primaryDark,
   },
   container: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.primaryDark,
   },
   inputSection: {
     margin: SPACING.base,
@@ -1787,7 +2100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   premiumBadge: {
     backgroundColor: COLORS.accent,
@@ -1802,14 +2115,25 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.lightGray,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     marginVertical: SPACING.base,
   },
   sectionLabel: {
-    fontSize: FONTS.sizes.sm,
-    fontWeight: '600',
-    color: COLORS.darkGray,
+    fontSize: FONTS.sizes.base,
+    fontWeight: '700',
+    color: COLORS.white,
+    marginBottom: 0,
+  },
+  sectionLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
     marginBottom: SPACING.sm,
+    gap: SPACING.sm,
+  },
+  calculatorHintText: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.gray,
+    fontStyle: 'italic',
   },
   perCityMovingCostRow: {
     flexDirection: 'row',
@@ -1856,7 +2180,7 @@ const styles = StyleSheet.create({
   },
   addCityText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.primary,
+    color: COLORS.secondary,
     fontWeight: '500',
   },
   proBadgeSmall: {
@@ -1866,33 +2190,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    padding: SPACING.md,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    marginTop: SPACING.xs,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
     gap: SPACING.sm,
   },
   circumstancesToggleText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
+    fontWeight: '500',
   },
   circumstancesSection: {
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: RADIUS.md,
     padding: SPACING.md,
     marginBottom: SPACING.md,
+    marginTop: SPACING.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   switchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.xs,
   },
   switchLabel: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
+    flex: 1,
   },
   switchText: {
-    fontSize: FONTS.sizes.base,
-    color: COLORS.darkGray,
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.white,
   },
 
   // Housing Options
@@ -1906,21 +2242,21 @@ const styles = StyleSheet.create({
   optionsSectionTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.white,
   },
   optionsDivider: {
     height: 1,
-    backgroundColor: COLORS.lightGray,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     marginVertical: SPACING.md,
   },
   buyOptionsContainer: {
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginTop: SPACING.sm,
     marginBottom: SPACING.sm,
     borderWidth: 1,
-    borderColor: COLORS.lightGray,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   buyOptionRow: {
     flexDirection: 'row',
@@ -1930,16 +2266,18 @@ const styles = StyleSheet.create({
   },
   buyOptionLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     flex: 1,
   },
   buyOptionInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
     paddingHorizontal: SPACING.md,
     minWidth: 120,
+    borderWidth: 1,
+    borderColor: COLORS.lightGray,
   },
   buyOptionInput: {
     flex: 1,
@@ -1951,12 +2289,12 @@ const styles = StyleSheet.create({
   },
   buyOptionPrefix: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.gray,
     marginRight: 4,
   },
   buyOptionSuffix: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.gray,
     marginLeft: 4,
   },
   buyOptionsNote: {
@@ -1980,14 +2318,16 @@ const styles = StyleSheet.create({
   },
   householdInputLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.xs,
   },
   householdInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.white,
     borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.lightGray,
     paddingHorizontal: SPACING.sm,
   },
   householdInput: {
@@ -2031,7 +2371,7 @@ const styles = StyleSheet.create({
   },
   autoDetectedSubtext: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.mediumGray,
+    color: COLORS.gray,
   },
   autoDetectedBadge: {
     backgroundColor: COLORS.infoLight,
@@ -2086,9 +2426,11 @@ const styles = StyleSheet.create({
   },
   travelModeToggle: {
     flexDirection: 'row',
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.white,
     borderRadius: RADIUS.sm,
-    padding: 4,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: COLORS.lightGray,
   },
   travelModeOption: {
     flex: 1,
@@ -2105,7 +2447,7 @@ const styles = StyleSheet.create({
   travelModeText: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '500',
-    color: COLORS.darkGray,
+    color: COLORS.gray,
   },
   travelModeTextActive: {
     color: COLORS.white,
@@ -2119,9 +2461,9 @@ const styles = StyleSheet.create({
 
   // Tabs
   tabContainer: {
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    borderBottomColor: 'rgba(255,255,255,0.08)',
     marginTop: SPACING.md,
   },
   tabScroll: {
@@ -2135,7 +2477,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
   },
   tabActive: {
-    borderBottomColor: COLORS.primary,
+    borderBottomColor: COLORS.accent,
   },
   tabContent: {
     flexDirection: 'row',
@@ -2148,11 +2490,29 @@ const styles = StyleSheet.create({
     color: COLORS.mediumGray,
   },
   tabLabelActive: {
-    color: COLORS.primary,
+    color: COLORS.white,
     fontWeight: '600',
+  },
+  tabLocked: {
+    opacity: 0.45,
+  },
+  tabLabelLocked: {
+    color: COLORS.mediumGray,
   },
   tabPane: {
     paddingBottom: SPACING.lg,
+  },
+  checklistTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  checklistTopRowLeft: {
+    flex: 1,
+  },
+  checklistInfoButton: {
+    padding: SPACING.sm,
+    marginTop: SPACING.xs,
   },
 
   // Hero Card
@@ -2249,7 +2609,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   statGrid: {
     flexDirection: 'row',
@@ -2262,7 +2622,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.accent,
   },
   statLabel: {
     fontSize: FONTS.sizes.xs,
@@ -2274,86 +2634,128 @@ const styles = StyleSheet.create({
   upsellCard: {
     marginHorizontal: SPACING.base,
     marginTop: SPACING.md,
-    backgroundColor: COLORS.warningLight,
-    borderWidth: 1,
-    borderColor: COLORS.accent,
+    backgroundColor: COLORS.primaryDark,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.lg,
+    alignItems: 'center',
+    ...SHADOWS.large,
   },
-  upsellHeader: {
+  upsellSparkleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm,
+    gap: 4,
     marginBottom: SPACING.sm,
   },
   upsellTitle: {
-    fontSize: FONTS.sizes.md,
+    fontSize: FONTS.sizes.xl,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
+    textAlign: 'center',
+    marginBottom: SPACING.xs,
   },
-  upsellText: {
+  upsellSubtitle: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.lightGray,
+    textAlign: 'center',
     lineHeight: 20,
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   upsellBenefits: {
-    marginBottom: SPACING.md,
+    width: '100%',
+    gap: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   upsellBenefitRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm,
-    paddingVertical: SPACING.xs,
+    gap: SPACING.md,
   },
-  upsellBenefitText: {
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
-    fontWeight: '500',
-  },
-  upsellPriceRow: {
-    flexDirection: 'row',
+  upsellBenefitIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: SPACING.sm,
-    marginBottom: SPACING.md,
-    paddingTop: SPACING.sm,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.lightGray,
   },
-  upsellPrice: {
-    fontSize: FONTS.sizes.xl,
-    fontWeight: '700',
-    color: COLORS.charcoal,
+  upsellBenefitContent: {
+    flex: 1,
   },
-  upsellBadge: {
-    backgroundColor: COLORS.success,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-    borderRadius: RADIUS.sm,
-  },
-  upsellBadgeText: {
-    fontSize: FONTS.sizes.xs,
+  upsellBenefitTitle: {
+    fontSize: FONTS.sizes.sm,
     fontWeight: '600',
     color: COLORS.white,
   },
+  upsellBenefitDesc: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.mediumGray,
+    marginTop: 1,
+  },
+  upsellDivider: {
+    width: '60%',
+    height: 1,
+    backgroundColor: COLORS.primaryLight,
+    marginBottom: SPACING.md,
+  },
+  upsellPriceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.xs,
+  },
+  upsellPrice: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: COLORS.white,
+  },
+  upsellPriceBadge: {
+    backgroundColor: COLORS.accent,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 3,
+    borderRadius: RADIUS.sm,
+  },
+  upsellPriceBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLORS.white,
+    letterSpacing: 1,
+  },
   upsellValueNote: {
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.mediumGray,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginBottom: SPACING.lg,
+  },
+  upsellCTA: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: SPACING.xs,
-    marginBottom: SPACING.md,
-    paddingVertical: SPACING.xs,
+    backgroundColor: COLORS.accent,
+    paddingVertical: SPACING.md + 2,
+    paddingHorizontal: SPACING.xl,
+    borderRadius: RADIUS.md,
+    width: '100%',
+    gap: SPACING.sm,
+    ...SHADOWS.medium,
   },
-  upsellValueNoteText: {
+  upsellCTAText: {
+    fontSize: FONTS.sizes.base,
+    fontWeight: '700',
+    color: COLORS.white,
+    letterSpacing: 0.5,
+  },
+  upsellFootnote: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.success,
-    fontWeight: '500',
-    fontStyle: 'italic',
+    color: COLORS.mediumGray,
+    marginTop: SPACING.sm,
+    textAlign: 'center',
   },
 
   // Recommendations
   recommendationText: {
     fontSize: FONTS.sizes.base,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     lineHeight: 22,
     marginBottom: SPACING.md,
   },
@@ -2366,7 +2768,7 @@ const styles = StyleSheet.create({
   considerationText: {
     flex: 1,
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
   },
 
@@ -2380,33 +2782,18 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginTop: SPACING.base,
     marginBottom: SPACING.sm,
   },
   emptyStateText: {
     fontSize: FONTS.sizes.base,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: SPACING.lg,
   },
 
-  // Calculator link
-  calculatorLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingVertical: SPACING.sm,
-    marginTop: -SPACING.sm,
-    marginBottom: SPACING.sm,
-    gap: SPACING.xs,
-  },
-  calculatorLinkText: {
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.primary,
-    fontWeight: '500',
-  },
 
   // Hero info button
   heroInfoButton: {
@@ -2455,7 +2842,7 @@ const styles = StyleSheet.create({
   infoModalTitle: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   infoModalClose: {
     padding: SPACING.xs,
@@ -2475,11 +2862,11 @@ const styles = StyleSheet.create({
   infoSectionTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   infoSectionText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
     marginBottom: SPACING.sm,
   },
@@ -2488,7 +2875,7 @@ const styles = StyleSheet.create({
   },
   infoListItem: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 22,
   },
   infoNote: {
@@ -2502,7 +2889,7 @@ const styles = StyleSheet.create({
   infoNoteText: {
     flex: 1,
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 18,
   },
   infoModalButton: {
@@ -2520,6 +2907,138 @@ const styles = StyleSheet.create({
 
   footer: {
     height: SPACING.xxxl,
+  },
+
+  // Onboarding Nudge
+  onboardingOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.xl,
+  },
+  onboardingCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.xl,
+    width: '100%',
+    maxWidth: 380,
+    alignItems: 'center',
+    ...SHADOWS.large,
+  },
+  onboardingIconRow: {
+    marginBottom: SPACING.md,
+  },
+  onboardingIconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: COLORS.primary + '15',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  onboardingTitle: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: '700',
+    color: COLORS.white,
+    textAlign: 'center',
+    marginBottom: SPACING.sm,
+  },
+  onboardingText: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: SPACING.lg,
+  },
+  onboardingButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    borderRadius: RADIUS.sm,
+    width: '100%',
+    alignItems: 'center',
+  },
+  onboardingButtonText: {
+    fontSize: FONTS.sizes.base,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+
+  // Export Tab
+  exportCard: {
+    alignItems: 'center',
+    padding: SPACING.xl,
+  },
+  exportHeader: {
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  exportTitle: {
+    fontSize: FONTS.sizes.xl,
+    fontWeight: '700',
+    color: COLORS.white,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.sm,
+  },
+  exportDescription: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+    textAlign: 'center',
+    lineHeight: 20,
+    maxWidth: 400,
+  },
+  exportFeatures: {
+    width: '100%',
+    marginBottom: SPACING.lg,
+    gap: SPACING.sm,
+  },
+  exportFeatureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  exportFeatureText: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+  },
+  exportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    borderRadius: RADIUS.sm,
+    width: '100%',
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
+  },
+  exportButtonDisabled: {
+    opacity: 0.6,
+  },
+  exportButtonText: {
+    fontSize: FONTS.sizes.base,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  exportButtonSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.offWhite,
+    borderWidth: 1,
+    borderColor: COLORS.lightGray,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    borderRadius: RADIUS.sm,
+    width: '100%',
+    gap: SPACING.sm,
+  },
+  exportButtonSecondaryText: {
+    fontSize: FONTS.sizes.sm,
+    fontWeight: '600',
+    color: COLORS.mediumGray,
   },
 });
 

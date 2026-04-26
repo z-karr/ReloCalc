@@ -34,7 +34,7 @@ interface PremiumContextType {
 const STORAGE_KEY = '@relocate_premium_status';
 
 // DEV MODE: Set to true to preview premium features (set back to false before shipping!)
-const DEV_FORCE_PREMIUM = true;
+const DEV_FORCE_PREMIUM = false;
 
 // Premium product identifier (for App Store)
 export const PREMIUM_PRODUCT_ID = 'com.relocalc.premium.full_analysis';

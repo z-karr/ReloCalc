@@ -16,7 +16,7 @@ if (Platform.OS === 'web') {
       overflow: hidden;
     }
     body {
-      background-color: #E5E8ED;
+      background-color: #E2E6ED;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
     /* Custom scrollbar for webkit browsers */
@@ -37,7 +37,20 @@ if (Platform.OS === 'web') {
     * {
       -ms-overflow-style: thin;
       scrollbar-width: thin;
-      scrollbar-color: #ADB5BD transparent;
+      scrollbar-color: #94A3B8 transparent;
+    }
+    /* Shimmer animation for metallic text */
+    @keyframes shimmer {
+      0% { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    [data-shimmer] {
+      background: linear-gradient(135deg, #F09080 0%, #E06B50 40%, #F09080 55%, #E06B50 70%, #F09080 100%) !important;
+      background-size: 200% 100% !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      animation: shimmer 3s ease-in-out infinite !important;
     }
   `;
   document.head.appendChild(style);
@@ -58,7 +71,7 @@ import { PremiumProvider } from './src/context/PremiumContext';
 const webLayoutStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E8ED',
+    backgroundColor: '#E2E6ED',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -103,7 +116,7 @@ const Stack = createNativeStackNavigator();
 // Explicitly typed navigation options to prevent boolean/string conversion issues
 const screenOptions: NativeStackNavigationOptions = {
   headerStyle: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.primaryDark,
   },
   headerTintColor: COLORS.white,
   headerTitleStyle: {

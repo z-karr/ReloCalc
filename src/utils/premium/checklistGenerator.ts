@@ -37,12 +37,22 @@ const PLANNING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     daysBeforeMove: 90,
   },
   {
+    task: 'Confirm relocation package details with employer in writing',
+    category: 'planning',
+    daysBeforeMove: 90,
+  },
+  {
+    task: 'Research new state/province tax implications and withholding changes',
+    category: 'planning',
+    daysBeforeMove: 88,
+  },
+  {
     task: 'Get quotes from at least 3 moving companies',
     category: 'planning',
     daysBeforeMove: 85,
   },
   {
-    task: 'Research international shipping requirements',
+    task: 'Research international shipping requirements and customs regulations',
     category: 'planning',
     daysBeforeMove: 85,
     showIf: { isInternational: true },
@@ -54,10 +64,34 @@ const PLANNING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     showIf: { isInternational: true },
   },
   {
+    task: 'Research import duties and restricted items for destination country',
+    category: 'planning',
+    daysBeforeMove: 85,
+    showIf: { isInternational: true },
+  },
+  {
+    task: 'Research international health insurance options',
+    category: 'planning',
+    daysBeforeMove: 83,
+    showIf: { isInternational: true },
+  },
+  {
+    task: 'Research tax treaty implications between countries',
+    category: 'planning',
+    daysBeforeMove: 83,
+    showIf: { isInternational: true },
+  },
+  {
     task: 'Research schools and childcare options',
     category: 'planning',
     daysBeforeMove: 80,
     showIf: { hasChildren: true },
+  },
+  {
+    task: 'Review lease for early termination clauses and penalties',
+    category: 'planning',
+    daysBeforeMove: 78,
+    showIf: { isRenter: true },
   },
   {
     task: 'Begin school enrollment process',
@@ -66,7 +100,7 @@ const PLANNING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     showIf: { hasChildren: true },
   },
   {
-    task: 'Notify landlord of move-out date',
+    task: 'Notify landlord of move-out date per lease requirements',
     category: 'planning',
     daysBeforeMove: 75,
     showIf: { isRenter: true },
@@ -82,6 +116,12 @@ const PLANNING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     category: 'planning',
     daysBeforeMove: 75,
     showIf: { hasPets: true },
+  },
+  {
+    task: 'Research pet import quarantine rules and required vaccinations',
+    category: 'planning',
+    daysBeforeMove: 75,
+    showIf: { hasPets: true, isInternational: true },
   },
   {
     task: 'Schedule vet visit for health certificate',
@@ -105,6 +145,11 @@ const PLANNING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     daysBeforeMove: 65,
   },
   {
+    task: 'Research new state driver\'s license and vehicle registration requirements',
+    category: 'planning',
+    daysBeforeMove: 63,
+  },
+  {
     task: 'Gather important documents (birth certificates, passports, etc.)',
     category: 'planning',
     daysBeforeMove: 60,
@@ -121,6 +166,28 @@ const PREPARATION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'complet
     task: 'Arrange temporary housing if needed',
     category: 'preparation',
     daysBeforeMove: 55,
+  },
+  {
+    task: 'Compare and purchase renter\'s insurance for new residence',
+    category: 'preparation',
+    daysBeforeMove: 53,
+    showIf: { isRenter: true },
+  },
+  {
+    task: 'Research homeowner\'s insurance for new home and get quotes',
+    category: 'preparation',
+    daysBeforeMove: 53,
+    showIf: { isHomeowner: true },
+  },
+  {
+    task: 'Contact auto insurance about rate changes for new location',
+    category: 'preparation',
+    daysBeforeMove: 52,
+  },
+  {
+    task: 'Compare health insurance plans if changing due to state/employer change',
+    category: 'preparation',
+    daysBeforeMove: 52,
   },
   {
     task: 'Start packing non-essential items',
@@ -145,14 +212,15 @@ const PREPARATION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'complet
     showIf: { hasPets: true },
   },
   {
-    task: 'Notify employer of official start date',
+    task: 'Coordinate start date with employer and housing timeline',
     category: 'preparation',
     daysBeforeMove: 45,
   },
   {
-    task: 'Cancel or transfer gym memberships',
+    task: 'Set up international phone plan or research local carriers',
     category: 'preparation',
     daysBeforeMove: 45,
+    showIf: { isInternational: true },
   },
   {
     task: 'Update subscriptions with new address',
@@ -177,6 +245,11 @@ const PREPARATION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'complet
     showIf: { hasPets: true },
   },
   {
+    task: 'Find a CPA/accountant familiar with your new state\'s tax laws',
+    category: 'preparation',
+    daysBeforeMove: 38,
+  },
+  {
     task: 'Sell or donate unwanted items',
     category: 'preparation',
     daysBeforeMove: 35,
@@ -188,13 +261,23 @@ const PREPARATION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'complet
     showIf: { hasPets: true },
   },
   {
-    task: 'Arrange international bank accounts if needed',
+    task: 'Set up international bank accounts and arrange currency exchange',
     category: 'preparation',
     daysBeforeMove: 35,
     showIf: { isInternational: true },
   },
   {
+    task: 'Cancel or transfer local memberships (gym, clubs, etc.)',
+    category: 'preparation',
+    daysBeforeMove: 32,
+  },
+  {
     task: 'Continue packing room by room',
+    category: 'preparation',
+    daysBeforeMove: 30,
+  },
+  {
+    task: 'Organize and photograph relocation expense receipts for reimbursement',
     category: 'preparation',
     daysBeforeMove: 30,
   },
@@ -207,7 +290,7 @@ const EXECUTION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completed
     daysBeforeMove: 25,
   },
   {
-    task: 'Set up utilities at new address',
+    task: 'Set up utilities at new address (electric, gas, water)',
     category: 'execution',
     daysBeforeMove: 25,
   },
@@ -215,6 +298,13 @@ const EXECUTION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completed
     task: 'File change of address with USPS',
     category: 'execution',
     daysBeforeMove: 20,
+    showIf: { isInternational: false },
+  },
+  {
+    task: 'Set up mail forwarding or international mail service',
+    category: 'execution',
+    daysBeforeMove: 20,
+    showIf: { isInternational: true },
   },
   {
     task: 'Update address with banks and financial institutions',
@@ -228,7 +318,12 @@ const EXECUTION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completed
     showIf: { isInternational: true },
   },
   {
-    task: 'Update address with insurance companies',
+    task: 'Update address with insurance companies (auto, health, life)',
+    category: 'execution',
+    daysBeforeMove: 18,
+  },
+  {
+    task: 'Update tax withholding with employer for new state/jurisdiction',
     category: 'execution',
     daysBeforeMove: 18,
   },
@@ -244,7 +339,7 @@ const EXECUTION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completed
     showIf: { isHomeowner: true },
   },
   {
-    task: 'Confirm children\'s school enrollment',
+    task: 'Confirm children\'s school enrollment and first day',
     category: 'execution',
     daysBeforeMove: 15,
     showIf: { hasChildren: true },
@@ -255,7 +350,7 @@ const EXECUTION_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completed
     daysBeforeMove: 14,
   },
   {
-    task: 'Prepare essentials box (toiletries, clothes, documents)',
+    task: 'Prepare essentials box (toiletries, clothes, documents, medications)',
     category: 'execution',
     daysBeforeMove: 10,
   },
@@ -338,7 +433,7 @@ const SETTLING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     daysBeforeMove: -1,
   },
   {
-    task: 'Check inventory and note any damage',
+    task: 'Check inventory and note any damage (photograph for claims)',
     category: 'settling',
     daysBeforeMove: -1,
   },
@@ -354,6 +449,16 @@ const SETTLING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
   },
   {
     task: 'Test all utilities and report issues',
+    category: 'settling',
+    daysBeforeMove: -2,
+  },
+  {
+    task: 'Explore neighborhood - grocery stores, pharmacies, hospitals',
+    category: 'settling',
+    daysBeforeMove: -2,
+  },
+  {
+    task: 'Locate nearest emergency services (hospital, urgent care, police)',
     category: 'settling',
     daysBeforeMove: -2,
   },
@@ -380,19 +485,19 @@ const SETTLING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     showIf: { hasPets: true },
   },
   {
-    task: 'Update driver\'s license with new address',
+    task: 'Set up local bank account if needed',
     category: 'settling',
     daysBeforeMove: -7,
   },
   {
-    task: 'Register vehicles in new state',
+    task: 'Register for local services (trash, recycling, water)',
     category: 'settling',
     daysBeforeMove: -7,
   },
   {
-    task: 'Update voter registration',
+    task: 'Meet neighbors and introduce yourself',
     category: 'settling',
-    daysBeforeMove: -14,
+    daysBeforeMove: -7,
   },
   {
     task: 'Find and visit new healthcare providers',
@@ -400,17 +505,27 @@ const SETTLING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     daysBeforeMove: -14,
   },
   {
-    task: 'Explore neighborhood - grocery stores, pharmacies, etc.',
-    category: 'settling',
-    daysBeforeMove: -7,
-  },
-  {
-    task: 'Meet neighbors and introduce yourself',
+    task: 'Update voter registration',
     category: 'settling',
     daysBeforeMove: -14,
   },
   {
-    task: 'Join local community groups or activities',
+    task: 'Update driver\'s license with new address (check state deadline)',
+    category: 'settling',
+    daysBeforeMove: -21,
+  },
+  {
+    task: 'Register vehicles in new state (most states allow 30-60 days)',
+    category: 'settling',
+    daysBeforeMove: -30,
+  },
+  {
+    task: 'Schedule emissions test or vehicle inspection if required by new state',
+    category: 'settling',
+    daysBeforeMove: -30,
+  },
+  {
+    task: 'Submit all relocation expense receipts for employer reimbursement',
     category: 'settling',
     daysBeforeMove: -30,
   },
@@ -420,9 +535,14 @@ const SETTLING_PHASE_TASKS: Omit<ChecklistItem, 'id' | 'completed' | 'completedD
     daysBeforeMove: -30,
   },
   {
-    task: 'File moving expense receipts for tax/reimbursement',
+    task: 'Join local community groups or activities',
     category: 'settling',
-    daysBeforeMove: -30,
+    daysBeforeMove: -45,
+  },
+  {
+    task: 'File moving expenses for tax deduction (if applicable)',
+    category: 'settling',
+    daysBeforeMove: -45,
   },
 ];
 

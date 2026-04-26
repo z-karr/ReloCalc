@@ -34,17 +34,7 @@ export function calculateRentVsBuy(
 ): RentVsBuyAnalysis {
   const cityData = { ...PREMIUM_DEFAULTS, ...premiumData };
 
-  // Rent scenario setup
-  const monthlyRent = customInputs?.monthlyRent ?? city.medianRent;
-  const rentScenario = calculateRentScenario(
-    monthlyRent,
-    yearsToAnalyze,
-    cityData.rentInflationRate,
-    customInputs?.purchasePrice ?? city.medianHomePrice,
-    customInputs?.downPaymentPercent ?? cityData.typicalDownPayment
-  );
-
-  // Buy scenario setup
+  // Buy scenario setup (calculate first so we can pass monthly cost to rent scenario)
   const purchasePrice = customInputs?.purchasePrice ?? city.medianHomePrice;
   const downPaymentPercent = customInputs?.downPaymentPercent ?? cityData.typicalDownPayment;
   const mortgageRate = customInputs?.mortgageRate ?? cityData.currentMortgageRate;
@@ -62,6 +52,24 @@ export function calculateRentVsBuy(
     cityData.avgMaintenanceCost,
     hoaFees,
     cityData.homeAppreciationRate
+  );
+
+  // Monthly buy cost for rent scenario savings calculation
+  const monthlyBuyCost = buyScenario.monthlyMortgage +
+    (buyScenario.propertyTax / 12) +
+    (buyScenario.homeInsurance / 12) +
+    (buyScenario.maintenance / 12) +
+    buyScenario.hoaFees;
+
+  // Rent scenario setup
+  const monthlyRent = customInputs?.monthlyRent ?? city.medianRent;
+  const rentScenario = calculateRentScenario(
+    monthlyRent,
+    yearsToAnalyze,
+    cityData.rentInflationRate,
+    customInputs?.purchasePrice ?? city.medianHomePrice,
+    customInputs?.downPaymentPercent ?? cityData.typicalDownPayment,
+    monthlyBuyCost
   );
 
   // Calculate break-even year
@@ -105,7 +113,8 @@ function calculateRentScenario(
   years: number,
   annualRentIncrease: number,
   homePrice: number,
-  downPaymentPercent: number
+  downPaymentPercent: number,
+  monthlyBuyCost?: number
 ): RentScenario {
   const rentersInsurance = 25; // ~$25/month average
   const investmentReturn = 0.07; // 7% market return
@@ -130,9 +139,10 @@ function calculateRentScenario(
     cumulativeRent += yearRent;
     totalRentPaid.push(cumulativeRent);
 
-    // Investment grows (down payment + portion of savings)
-    // Assume renter saves difference between rent and equivalent mortgage payment
-    investment *= (1 + investmentReturn);
+    // Investment grows (down payment + monthly savings from rent vs buy difference)
+    const monthlyRentCost = currentRent + rentersInsurance;
+    const monthlySavings = monthlyBuyCost ? Math.max(0, monthlyBuyCost - monthlyRentCost) : 0;
+    investment = investment * (1 + investmentReturn) + monthlySavings * 12;
     investmentValue.push(investment);
 
     // Total cost = cumulative rent - investment gains

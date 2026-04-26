@@ -650,10 +650,11 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.primaryDark,
   },
   scrollView: {
     flex: 1,
+    backgroundColor: COLORS.primaryDark,
     paddingHorizontal: SPACING.base,
     paddingTop: SPACING.base,
   },
@@ -677,7 +678,7 @@ const styles = StyleSheet.create({
   preferencesToggleText: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   preferencesSection: {
     marginTop: SPACING.base,
@@ -709,7 +710,7 @@ const styles = StyleSheet.create({
   resultsCount: {
     fontSize: FONTS.sizes.xs,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   showMoreContainer: {
     marginTop: SPACING.md,
@@ -741,7 +742,7 @@ const styles = StyleSheet.create({
   recCityName: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   recState: {
     fontSize: FONTS.sizes.sm,
@@ -757,11 +758,11 @@ const styles = StyleSheet.create({
   matchScoreValue: {
     fontSize: FONTS.sizes.xl,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   matchScoreLabel: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.primary,
+    color: COLORS.info,
     opacity: 0.8,
   },
   recStats: {
@@ -785,7 +786,7 @@ const styles = StyleSheet.create({
   recStatValue: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginTop: 2,
   },
   salaryNeeded: {
@@ -799,7 +800,7 @@ const styles = StyleSheet.create({
   },
   salaryNeededText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   salaryNeededValue: {
     fontWeight: '700',
@@ -888,12 +889,12 @@ const styles = StyleSheet.create({
   regionFilterTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   clearFilterText: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   regionChips: {
     flexDirection: 'row',

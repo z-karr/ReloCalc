@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   legendScore: {

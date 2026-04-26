@@ -356,13 +356,14 @@ export const SalaryCalculatorScreen: React.FC<SalaryCalculatorScreenProps> = ({ 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.primaryDark,
   },
   container: {
     flex: 1,
   },
   scrollView: {
     flex: 1,
+    backgroundColor: COLORS.primaryDark,
     paddingHorizontal: SPACING.base,
     paddingTop: SPACING.base,
   },
@@ -387,7 +388,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: FONTS.sizes.xs,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   badgeTarget: {
     backgroundColor: COLORS.accent + '15',
@@ -399,18 +400,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.md,
     marginBottom: SPACING.md,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: RADIUS.md,
   },
   mainStatLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: 4,
   },
   mainStatValue: {
     fontSize: FONTS.sizes.hero,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.accent,
     letterSpacing: -1,
   },
   mainStatValueLocal: {
@@ -421,7 +422,7 @@ const styles = StyleSheet.create({
   },
   taxBreakdown: {
     borderTopWidth: 1,
-    borderTopColor: COLORS.lightGray,
+    borderTopColor: 'rgba(255,255,255,0.1)',
     paddingTop: SPACING.md,
   },
   taxRow: {
@@ -431,18 +432,18 @@ const styles = StyleSheet.create({
   },
   taxRowTotal: {
     borderTopWidth: 1,
-    borderTopColor: COLORS.lightGray,
+    borderTopColor: 'rgba(255,255,255,0.1)',
     marginTop: SPACING.sm,
     paddingTop: SPACING.md,
   },
   taxLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   taxValue: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   taxValueNegative: {
     fontSize: FONTS.sizes.sm,
@@ -452,7 +453,7 @@ const styles = StyleSheet.create({
   taxLabelTotal: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   taxLabelLocal: {
     fontSize: FONTS.sizes.xs,
@@ -470,12 +471,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: SPACING.md,
     padding: SPACING.md,
-    backgroundColor: COLORS.warningLight,
+    backgroundColor: COLORS.warning + '15',
     borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.warning + '25',
   },
   effectiveRateLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   effectiveRateValue: {
     fontSize: FONTS.sizes.md,
@@ -485,25 +488,27 @@ const styles = StyleSheet.create({
   comparison: {
     marginTop: SPACING.md,
     padding: SPACING.md,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   comparisonItem: {
     alignItems: 'center',
   },
   comparisonLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: 4,
   },
   comparisonValue: {
     fontSize: FONTS.sizes.xxl,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   comparisonNote: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginTop: 4,
     textAlign: 'center',
   },
@@ -512,8 +517,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: SPACING.md,
     padding: SPACING.md,
-    backgroundColor: COLORS.infoLight,
+    backgroundColor: COLORS.info + '15',
     borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.info + '25',
     gap: SPACING.md,
   },
   equivalentText: {
@@ -522,7 +529,7 @@ const styles = StyleSheet.create({
   },
   equivalentLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     textAlign: 'center',
   },
   equivalentValue: {

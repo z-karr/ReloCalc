@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   menuTitle: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   closeButton: {
     padding: SPACING.xs,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   menuOptionTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: 2,
   },
   menuOptionDescription: {

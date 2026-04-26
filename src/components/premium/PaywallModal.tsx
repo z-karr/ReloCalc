@@ -144,7 +144,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={COLORS.darkGray} />
+              <Ionicons name="close" size={24} color={COLORS.mediumGray} />
             </TouchableOpacity>
           </View>
 
@@ -158,7 +158,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               <View style={styles.iconContainer}>
                 <Ionicons name="analytics" size={48} color={COLORS.white} />
               </View>
-              <Text style={styles.title}>ReloCalc Premium</Text>
+              <Text style={styles.title}>ReloFi Premium</Text>
               <Text style={styles.subtitle}>Full Analysis Suite</Text>
               {feature && (
                 <View style={styles.featureBadge}>
@@ -321,12 +321,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONTS.sizes.xl,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: SPACING.xs,
   },
   subtitle: {
     fontSize: FONTS.sizes.md,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   featureBadge: {
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
   featuresTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: SPACING.md,
   },
   featureRow: {
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   featureDescription: {
     fontSize: FONTS.sizes.sm,

@@ -189,18 +189,18 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primaryDark,
   },
   section: {
     paddingHorizontal: SPACING.base,
     paddingVertical: SPACING.base,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    borderBottomColor: 'rgba(255,255,255,0.08)',
   },
   sectionTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.md,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -209,8 +209,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
   },
@@ -226,7 +228,7 @@ const styles = StyleSheet.create({
   countryName: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   helperText: {
     fontSize: FONTS.sizes.xs,
@@ -275,7 +277,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
   },
   disclaimerNote: {
@@ -297,7 +299,7 @@ const styles = StyleSheet.create({
   resetButtonText: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   modal: {
     flex: 1,

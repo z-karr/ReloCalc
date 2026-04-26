@@ -175,6 +175,8 @@ export const NegotiationToolkit: React.FC<NegotiationToolkitProps> = ({
 }) => {
   const [activeSection, setActiveSection] = useState<'costs' | 'benchmarks' | 'scripts'>('costs');
   const [showCostInfo, setShowCostInfo] = useState(false);
+  const [showBenchmarkInfo, setShowBenchmarkInfo] = useState(false);
+  const [showScriptInfo, setShowScriptInfo] = useState(false);
 
   // Get move type info for display
   const moveTypeLabel = moveClassification ? getMoveTypeLabel(moveClassification.type) : 'Relocation';
@@ -363,7 +365,7 @@ export const NegotiationToolkit: React.FC<NegotiationToolkitProps> = ({
                       onPress={() => setShowCostInfo(false)}
                       style={styles.infoModalClose}
                     >
-                      <Ionicons name="close" size={24} color={COLORS.darkGray} />
+                      <Ionicons name="close" size={24} color={COLORS.mediumGray} />
                     </TouchableOpacity>
                   </View>
 
@@ -534,10 +536,96 @@ export const NegotiationToolkit: React.FC<NegotiationToolkitProps> = ({
         {/* Benchmarks Section */}
         {activeSection === 'benchmarks' && (
           <View style={styles.benchmarksSection}>
-            <Text style={styles.sectionTitle}>Industry Benchmarks</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Industry Benchmarks</Text>
+              <TouchableOpacity
+                onPress={() => setShowBenchmarkInfo(true)}
+                style={styles.sectionInfoButton}
+              >
+                <Ionicons name="information-circle-outline" size={20} color={COLORS.primary} />
+              </TouchableOpacity>
+            </View>
             <Text style={styles.sectionDescription}>
               What companies typically cover for relocations
             </Text>
+
+            {/* Benchmark Info Modal */}
+            <Modal
+              visible={showBenchmarkInfo}
+              animationType="fade"
+              transparent={true}
+              onRequestClose={() => setShowBenchmarkInfo(false)}
+            >
+              <View style={styles.infoModalOverlay}>
+                <View style={styles.infoModalContent}>
+                  <View style={styles.infoModalHeader}>
+                    <Text style={styles.infoModalTitle}>Understanding Benchmarks</Text>
+                    <TouchableOpacity
+                      onPress={() => setShowBenchmarkInfo(false)}
+                      style={styles.infoModalClose}
+                    >
+                      <Ionicons name="close" size={24} color={COLORS.mediumGray} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <ScrollView style={styles.infoModalBody}>
+                    <View style={styles.infoSection}>
+                      <View style={styles.infoSectionHeader}>
+                        <Ionicons name="stats-chart-outline" size={20} color={COLORS.primary} />
+                        <Text style={styles.infoSectionTitle}>What This Shows</Text>
+                      </View>
+                      <Text style={styles.infoSectionText}>
+                        Industry benchmarks represent what companies typically include in relocation packages, based on corporate relocation survey data.
+                      </Text>
+                    </View>
+
+                    <View style={styles.infoSection}>
+                      <View style={styles.infoSectionHeader}>
+                        <Ionicons name="bar-chart-outline" size={20} color={COLORS.success} />
+                        <Text style={styles.infoSectionTitle}>The Green Bars</Text>
+                      </View>
+                      <Text style={styles.infoSectionText}>
+                        The green bars show the percentage of companies that typically cover each component. A full bar (100%) means nearly all companies include it. A half bar (50%) means only about half of companies offer that benefit.
+                      </Text>
+                    </View>
+
+                    <View style={styles.infoSection}>
+                      <View style={styles.infoSectionHeader}>
+                        <Ionicons name="cash-outline" size={20} color={COLORS.primary} />
+                        <Text style={styles.infoSectionTitle}>Dollar Ranges</Text>
+                      </View>
+                      <Text style={styles.infoSectionText}>
+                        The dollar ranges show the typical low-to-high amounts companies provide for each component. Your actual package may vary based on seniority, company size, and industry.
+                      </Text>
+                    </View>
+
+                    <View style={styles.infoSection}>
+                      <View style={styles.infoSectionHeader}>
+                        <Ionicons name="bulb-outline" size={20} color={COLORS.warning} />
+                        <Text style={styles.infoSectionTitle}>How to Use This</Text>
+                      </View>
+                      <Text style={styles.infoSectionText}>
+                        Use these benchmarks as leverage in your negotiation. Items with high coverage rates (like moving expenses) are easy asks. Items with lower rates (like COL adjustments) may require stronger justification — use the Scripts tab for professional language.
+                      </Text>
+                    </View>
+
+                    <View style={styles.infoNote}>
+                      <Ionicons name="information-circle" size={18} color={COLORS.info} />
+                      <Text style={styles.infoNoteText}>
+                        Tech companies and senior roles often exceed these ranges. Use these as a baseline, not a ceiling.
+                      </Text>
+                    </View>
+                  </ScrollView>
+
+                  <TouchableOpacity
+                    onPress={() => setShowBenchmarkInfo(false)}
+                    style={styles.infoModalButton}
+                  >
+                    <Text style={styles.infoModalButtonText}>Got It</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
 
             <View style={styles.benchmarksList}>
               {benchmarks.map((benchmark, index) => (
@@ -557,13 +645,92 @@ export const NegotiationToolkit: React.FC<NegotiationToolkitProps> = ({
         {/* Scripts Section */}
         {activeSection === 'scripts' && (
           <View style={styles.scriptsSection}>
-            <Text style={styles.sectionTitle}>Negotiation Scripts</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Negotiation Scripts</Text>
+              <TouchableOpacity
+                onPress={() => setShowScriptInfo(true)}
+                style={styles.sectionInfoButton}
+              >
+                <Ionicons name="information-circle-outline" size={20} color={COLORS.primary} />
+              </TouchableOpacity>
+            </View>
             <Text style={styles.sectionDescription}>
               Professional language to use in your negotiation
             </Text>
 
+            {/* Script Info Modal */}
+            <Modal
+              visible={showScriptInfo}
+              animationType="fade"
+              transparent={true}
+              onRequestClose={() => setShowScriptInfo(false)}
+            >
+              <View style={styles.infoModalOverlay}>
+                <View style={styles.infoModalContent}>
+                  <View style={styles.infoModalHeader}>
+                    <Text style={styles.infoModalTitle}>Using Negotiation Scripts</Text>
+                    <TouchableOpacity
+                      onPress={() => setShowScriptInfo(false)}
+                      style={styles.infoModalClose}
+                    >
+                      <Ionicons name="close" size={24} color={COLORS.mediumGray} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <ScrollView style={styles.infoModalBody}>
+                    <View style={styles.infoSection}>
+                      <View style={styles.infoSectionHeader}>
+                        <Ionicons name="chatbubbles-outline" size={20} color={COLORS.primary} />
+                        <Text style={styles.infoSectionTitle}>What These Are</Text>
+                      </View>
+                      <Text style={styles.infoSectionText}>
+                        These are ready-to-use talking points tailored to your specific move. Each script is pre-filled with your calculated figures and city-specific data so you can speak confidently with numbers to back up your requests.
+                      </Text>
+                    </View>
+
+                    <View style={styles.infoSection}>
+                      <View style={styles.infoSectionHeader}>
+                        <Ionicons name="clipboard-outline" size={20} color={COLORS.success} />
+                        <Text style={styles.infoSectionTitle}>How to Use Them</Text>
+                      </View>
+                      <Text style={styles.infoSectionText}>
+                        Tap a script to expand it, then use the copy button to save it. You can use these word-for-word in emails, or adapt them as talking points for phone and in-person conversations. The professional tone is intentional — it frames your requests as reasonable and data-driven.
+                      </Text>
+                    </View>
+
+                    <View style={styles.infoSection}>
+                      <View style={styles.infoSectionHeader}>
+                        <Ionicons name="timer-outline" size={20} color={COLORS.warning} />
+                        <Text style={styles.infoSectionTitle}>When to Use Each Script</Text>
+                      </View>
+                      <View style={styles.infoList}>
+                        <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>COL Adjustment / Relocation Bonus:</Text> During salary negotiation, after receiving the initial offer</Text>
+                        <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Tax Gross-Up:</Text> When discussing the relocation package details with HR</Text>
+                        <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Temporary Housing:</Text> When finalizing relocation terms and start date</Text>
+                        <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Housing Assistance:</Text> When discussing the full scope of relocation support</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.infoNote}>
+                      <Ionicons name="information-circle" size={18} color={COLORS.info} />
+                      <Text style={styles.infoNoteText}>
+                        Customize these scripts to match your communication style. The key is keeping the data-driven framing while making it sound natural to you.
+                      </Text>
+                    </View>
+                  </ScrollView>
+
+                  <TouchableOpacity
+                    onPress={() => setShowScriptInfo(false)}
+                    style={styles.infoModalButton}
+                  >
+                    <Text style={styles.infoModalButtonText}>Got It</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+
             <ScriptCard
-              title="Request COL Adjustment"
+              title={costBreakdown.colAdjustmentNeeded > 0 ? "Request COL Adjustment" : "Request Relocation Bonus"}
               script={scripts.colAdjustment}
               icon="cash-outline"
               color={COLORS.success}
@@ -581,9 +748,9 @@ export const NegotiationToolkit: React.FC<NegotiationToolkitProps> = ({
               color={COLORS.warning}
             />
             <ScriptCard
-              title="Request Home Sale Assistance"
+              title={plansToBuy ? "Request Closing Cost Assistance" : "Request Housing Transition Support"}
               script={scripts.homeSaleAssistance}
-              icon="key-outline"
+              icon={plansToBuy ? "home-outline" : "key-outline"}
               color={COLORS.primary}
             />
           </View>
@@ -740,7 +907,7 @@ const styles = StyleSheet.create({
   },
   gapAlertText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     lineHeight: 18,
   },
   tabs: {
@@ -768,7 +935,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   tabTextActive: {
-    color: COLORS.primary,
+    color: COLORS.info,
     fontWeight: '600',
   },
   content: {
@@ -786,7 +953,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   sectionDescription: {
     fontSize: FONTS.sizes.sm,
@@ -816,7 +983,7 @@ const styles = StyleSheet.create({
   },
   costLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   costLabelTotal: {
     fontWeight: '700',
@@ -833,12 +1000,12 @@ const styles = StyleSheet.create({
   costAmount: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   costAmountTotal: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   divider: {
     height: 1,
@@ -854,7 +1021,7 @@ const styles = StyleSheet.create({
   additionalCostsTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   additionalCostItem: {
@@ -865,7 +1032,7 @@ const styles = StyleSheet.create({
   },
   additionalCostText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   // Benchmarks Section
   benchmarksSection: {},
@@ -885,7 +1052,7 @@ const styles = StyleSheet.create({
   benchmarkComponent: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   benchmarkCoverage: {
     fontSize: FONTS.sizes.xs,
@@ -911,7 +1078,7 @@ const styles = StyleSheet.create({
   },
   benchmarkRange: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   benchmarkNote: {
     flexDirection: 'row',
@@ -925,7 +1092,7 @@ const styles = StyleSheet.create({
   benchmarkNoteText: {
     flex: 1,
     fontSize: FONTS.sizes.xs,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     lineHeight: 16,
   },
   // Scripts Section
@@ -957,7 +1124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   scriptContent: {
     padding: SPACING.md,
@@ -967,7 +1134,7 @@ const styles = StyleSheet.create({
   },
   scriptText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     lineHeight: 20,
     fontStyle: 'italic',
     marginBottom: SPACING.md,
@@ -984,7 +1151,7 @@ const styles = StyleSheet.create({
   },
   copyButtonText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.primary,
+    color: COLORS.info,
     fontWeight: '600',
   },
   // Points Section
@@ -997,7 +1164,7 @@ const styles = StyleSheet.create({
   pointsTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.md,
   },
   pointItem: {
@@ -1022,7 +1189,7 @@ const styles = StyleSheet.create({
   pointText: {
     flex: 1,
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     lineHeight: 18,
   },
   // CTA Section
@@ -1073,7 +1240,7 @@ const styles = StyleSheet.create({
   infoModalTitle: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   infoModalClose: {
     padding: SPACING.xs,
@@ -1093,11 +1260,11 @@ const styles = StyleSheet.create({
   infoSectionTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   infoSectionText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
     marginBottom: SPACING.sm,
   },
@@ -1106,13 +1273,13 @@ const styles = StyleSheet.create({
   },
   infoListItem: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 22,
     marginBottom: SPACING.xs,
   },
   infoListBold: {
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   infoNote: {
     flexDirection: 'row',
@@ -1125,7 +1292,7 @@ const styles = StyleSheet.create({
   infoNoteText: {
     flex: 1,
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 18,
   },
   infoModalButton: {

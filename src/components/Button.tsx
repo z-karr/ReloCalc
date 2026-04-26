@@ -94,7 +94,7 @@ export const Button: React.FC<ButtonProps> = ({
       style={[...getButtonStyle(), style]}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
     >
       {loading ? (
         <ActivityIndicator
@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: RADIUS.md,
     gap: SPACING.sm,
-    // Web-specific: cursor pointer for better UX
     ...(Platform.OS === 'web' && {
       cursor: 'pointer',
       userSelect: 'none',
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
   fullWidth: {
     width: '100%',
   },
-  
+
   // Sizes
   sm: {
     paddingVertical: SPACING.sm,
@@ -157,7 +156,7 @@ const styles = StyleSheet.create({
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: COLORS.primary,
   },
   ghost: {
@@ -166,13 +165,15 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: COLORS.lightGray,
     borderColor: COLORS.lightGray,
-    ...SHADOWS.sm,
+    shadowOpacity: 0,
+    elevation: 0,
   },
 
   // Text styles
   text: {
-    fontWeight: '600',
+    fontWeight: '700',
     textAlign: 'center',
+    letterSpacing: 0.3,
   },
   smText: {
     fontSize: FONTS.sizes.sm,

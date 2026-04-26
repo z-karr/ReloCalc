@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   cityCount: {
     fontSize: FONTS.sizes.sm,
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   cityName: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   cityLocation: {
     fontSize: FONTS.sizes.sm,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   },
   currencySymbol: {
     fontSize: FONTS.sizes.md,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '600',
   },
   salaryInput: {
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     fontSize: FONTS.sizes.md,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     paddingVertical: SPACING.sm,
   },
   cityStats: {
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginTop: 2,
   },
   addCityCard: {
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   addCityText: {
     fontSize: FONTS.sizes.md,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
     marginTop: SPACING.xs,
   },
   addCitySubtext: {
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   formTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   salaryInputRow: {
     marginTop: SPACING.md,
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   addButton: {

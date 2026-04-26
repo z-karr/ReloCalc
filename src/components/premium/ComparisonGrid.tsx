@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   cityName: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     textAlign: 'center',
   },
   currentLabel: {
@@ -330,14 +330,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.info,
     marginBottom: SPACING.sm,
     paddingHorizontal: SPACING.xs,
   },
   sectionLabel: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   row: {
     flexDirection: 'row',
@@ -368,12 +368,12 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   headerLabel: {
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   valuesScroll: {
     flex: 1,
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   },
   valueText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   highlightText: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     flex: 1,
   },
   noWeaknesses: {

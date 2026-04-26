@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   headerSubtitle: {
     fontSize: FONTS.sizes.sm,
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   projectionValue: {
     fontSize: FONTS.sizes.xl,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginTop: 4,
   },
   yearlyBreakdown: {
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   breakdownTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   yearGrid: {
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   yearNetWorth: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginTop: 4,
   },
   yearSavings: {
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   rangeTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   rangeBar: {
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   },
   rangeLabelText: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   // Break-Even Scenarios styles
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
   breakEvenTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   breakEvenSubtitle: {
     fontSize: FONTS.sizes.sm,
@@ -715,7 +715,7 @@ const styles = StyleSheet.create({
   infoModalTitle: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   infoModalClose: {
     padding: SPACING.xs,
@@ -735,11 +735,11 @@ const styles = StyleSheet.create({
   infoSectionTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   infoSectionText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
     marginBottom: SPACING.sm,
   },
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
   },
   infoListItem: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 22,
   },
   infoNote: {
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
   infoNoteText: {
     flex: 1,
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 18,
   },
   infoModalButton: {

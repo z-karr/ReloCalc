@@ -45,7 +45,7 @@ export function DataDisclaimer({ variant = 'inline', showIcon = true }: DataDisc
 
 const styles = StyleSheet.create({
   inlineContainer: {
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: COLORS.lightGray,
-    backgroundColor: COLORS.offWhite,
+    borderTopColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255,255,255,0.03)',
   },
   footerText: {
     fontSize: FONTS.sizes.xs,

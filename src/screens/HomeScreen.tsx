@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS, LAYOUT } from '../theme';
-import { Card } from '../components';
 
 interface HomeScreenProps {
   navigation: any;
@@ -23,6 +22,7 @@ interface FeatureCardProps {
   description: string;
   onPress: () => void;
   color: string;
+  badge?: string;
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -31,16 +31,23 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   description,
   onPress,
   color,
+  badge,
 }) => (
-  <TouchableOpacity style={styles.featureCard} onPress={onPress} activeOpacity={0.9}>
-    <View style={[styles.iconContainer, { backgroundColor: color + '15' }]}>
-      <Ionicons name={icon} size={28} color={color} />
+  <TouchableOpacity style={[styles.featureCard, { borderLeftColor: color + '50' }]} onPress={onPress} activeOpacity={0.88}>
+    <View style={[styles.iconContainer, { backgroundColor: color + '30' }]}>
+      <Ionicons name={icon} size={20} color={color} />
     </View>
     <View style={styles.featureContent}>
-      <Text style={styles.featureTitle}>{title}</Text>
+      <View style={styles.featureTitleRow}>
+        <Text style={styles.featureTitle}>{title}</Text>
+        {badge && (
+          <View style={styles.featureBadge}>
+            <Text style={styles.featureBadgeText}>{badge}</Text>
+          </View>
+        )}
+      </View>
       <Text style={styles.featureDescription}>{description}</Text>
     </View>
-    <Ionicons name="chevron-forward" size={20} color={COLORS.mediumGray} />
   </TouchableOpacity>
 );
 
@@ -51,19 +58,25 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.headerGradient}>
+          <View style={styles.headerContent}>
             <View style={styles.headerTop}>
               <View>
-                <Text style={styles.appName}>ReloCalc</Text>
+                <View style={styles.appNameRow}>
+                  <Text style={styles.appName}>Relo</Text>
+                  <Text
+                    style={styles.appNameAccent}
+                    {...(Platform.OS === 'web' ? { dataSet: { shimmer: '' } } : {})}
+                  >Fi</Text>
+                </View>
                 <Text style={styles.tagline}>
-                  Make smarter relocation decisions
+                  Smart relocation decisions,{'\n'}backed by real data
                 </Text>
               </View>
               <TouchableOpacity
                 style={styles.settingsButton}
                 onPress={() => navigation.navigate('Settings')}
               >
-                <Ionicons name="settings-outline" size={24} color={COLORS.white} />
+                <Ionicons name="settings-outline" size={22} color={COLORS.mediumGray} />
               </TouchableOpacity>
             </View>
           </View>
@@ -89,26 +102,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
         {/* Main Features */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Calculate</Text>
-          
+          <View style={styles.sectionTitleRow}>
+            <View style={[styles.sectionDot, { backgroundColor: COLORS.secondary }]} />
+            <Text style={styles.sectionTitle}>Calculate</Text>
+          </View>
+
           <FeatureCard
             icon="calculator-outline"
             title="Salary Calculator"
-            description="Compare take-home pay across cities with real tax rates"
+            description="Compare take-home pay with real tax rates"
             onPress={() => navigation.navigate('SalaryCalculator')}
-            color={COLORS.primary}
+            color={COLORS.info}
           />
 
           <FeatureCard
             icon="git-compare-outline"
             title="City Comparison"
-            description="Compare two cities side by side with detailed metrics"
+            description="Side-by-side metrics for two cities"
             onPress={() => navigation.navigate('CityComparison')}
             color={COLORS.secondary}
           />
 
           <FeatureCard
-            icon="car-outline"
+            icon="cube-outline"
             title="Moving Cost Estimator"
             description="Estimate your total relocation expenses"
             onPress={() => navigation.navigate('MovingEstimator')}
@@ -117,37 +133,39 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Discover</Text>
+          <View style={styles.sectionTitleRow}>
+            <View style={[styles.sectionDot, { backgroundColor: COLORS.accent }]} />
+            <Text style={styles.sectionTitle}>Analyze</Text>
+          </View>
 
           <FeatureCard
             icon="compass-outline"
             title="City Recommendations"
-            description="Find your ideal city based on your preferences"
+            description="Find your ideal city based on preferences"
             onPress={() => navigation.navigate('Recommendations')}
-            color="#9B59B6"
+            color="#7C3AED"
           />
 
           <FeatureCard
-            icon="bar-chart-outline"
+            icon="analytics-outline"
             title="Full Analysis"
-            description="Complete relocation analysis with break-even timeline"
+            description="Complete financial analysis with projections"
             onPress={() => navigation.navigate('FullAnalysis')}
-            color="#3498DB"
+            color={COLORS.info}
+            badge="PRO"
           />
         </View>
 
-        {/* Info Card */}
-        <Card style={styles.infoCard} variant="outlined">
-          <View style={styles.infoContent}>
-            <Ionicons name="information-circle" size={24} color={COLORS.info} />
-            <View style={styles.infoText}>
-              <Text style={styles.infoTitle}>Data Sources</Text>
-              <Text style={styles.infoDescription}>
-                Tax calculations use current official rates for 40 countries. Cost of living data from Numbeo and C2ER. City metrics from official government sources.
-              </Text>
-            </View>
+        {/* Data Sources */}
+        <View style={styles.dataSourceCard}>
+          <View style={styles.dataSourceHeader}>
+            <Ionicons name="shield-checkmark" size={18} color={COLORS.secondary} />
+            <Text style={styles.dataSourceTitle}>Trusted Data Sources</Text>
           </View>
-        </Card>
+          <Text style={styles.dataSourceText}>
+            Tax calculations use current official rates for 40 countries. Cost of living data from Numbeo and C2ER. City metrics from official government sources.
+          </Text>
+        </View>
 
         <View style={styles.footer} />
       </ScrollView>
@@ -158,17 +176,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.white,
   },
   container: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.primaryDark,
   },
   header: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.white,
     paddingBottom: SPACING.xl,
   },
-  headerGradient: {
+  headerContent: {
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.base,
   },
@@ -184,26 +202,37 @@ const styles = StyleSheet.create({
       cursor: 'pointer',
     }),
   },
+  appNameRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
   appName: {
     fontSize: FONTS.sizes.hero,
     fontWeight: '800',
-    color: COLORS.white,
-    letterSpacing: -1,
+    color: COLORS.charcoal,
+    letterSpacing: -1.5,
+  },
+  appNameAccent: {
+    fontSize: FONTS.sizes.hero,
+    fontWeight: '800',
+    letterSpacing: -1.5,
+    color: COLORS.accent,
   },
   tagline: {
-    fontSize: FONTS.sizes.md,
-    color: COLORS.white,
-    opacity: 0.85,
-    marginTop: SPACING.xs,
+    fontSize: FONTS.sizes.base,
+    color: COLORS.gray,
+    marginTop: SPACING.sm,
+    lineHeight: 22,
   },
   statsContainer: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     marginHorizontal: SPACING.base,
-    marginTop: -SPACING.lg,
-    borderRadius: RADIUS.lg,
-    paddingVertical: SPACING.base,
-    ...SHADOWS.lg,
+    marginTop: SPACING.md,
+    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
   },
   statBox: {
     flex: 1,
@@ -211,22 +240,38 @@ const styles = StyleSheet.create({
   },
   statDivider: {
     width: 1,
-    backgroundColor: COLORS.lightGray,
+    backgroundColor: COLORS.primaryLight,
     marginVertical: SPACING.xs,
   },
   statNumber: {
     fontSize: FONTS.sizes.xl,
-    fontWeight: '700',
-    color: COLORS.primary,
+    fontWeight: '800',
+    color: COLORS.white,
+    letterSpacing: -0.5,
   },
   statLabel: {
-    fontSize: FONTS.sizes.sm,
+    fontSize: FONTS.sizes.xs,
     color: COLORS.mediumGray,
     marginTop: 2,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   section: {
     paddingHorizontal: SPACING.base,
-    marginTop: SPACING.lg,
+    marginTop: SPACING.xl,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+    marginLeft: SPACING.xs,
+    gap: SPACING.sm,
+  },
+  sectionDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   sectionTitle: {
     fontSize: FONTS.sizes.xs,
@@ -234,27 +279,28 @@ const styles = StyleSheet.create({
     color: COLORS.mediumGray,
     textTransform: 'uppercase',
     letterSpacing: 1.5,
-    marginBottom: SPACING.md,
-    marginLeft: SPACING.xs,
   },
   featureCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.base,
-    marginBottom: SPACING.md,
-    ...SHADOWS.md,
-    // Web-specific: cursor pointer and hover transition
+    backgroundColor: 'rgba(255,255,255,0.09)',
+    borderRadius: RADIUS.md,
+    padding: SPACING.md,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+    borderLeftWidth: 3,
+    borderLeftColor: 'rgba(255,255,255,0.15)',
     ...(Platform.OS === 'web' && {
       cursor: 'pointer',
-      transition: 'transform 0.15s, box-shadow 0.15s',
-    }),
+      transition: 'background-color 0.2s',
+      backdropFilter: 'blur(8px)',
+    } as any),
   },
   iconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: RADIUS.md,
+    width: 38,
+    height: 38,
+    borderRadius: RADIUS.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -262,40 +308,59 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: SPACING.md,
   },
+  featureTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
   featureTitle: {
     fontSize: FONTS.sizes.base,
-    fontWeight: '700',
-    color: COLORS.charcoal,
+    fontWeight: '600',
+    color: COLORS.white,
+    letterSpacing: -0.1,
+  },
+  featureBadge: {
+    backgroundColor: COLORS.accent,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: RADIUS.xs,
+  },
+  featureBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: COLORS.white,
+    letterSpacing: 0.8,
   },
   featureDescription: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginTop: 2,
+    lineHeight: 17,
   },
-  infoCard: {
+  dataSourceCard: {
     marginHorizontal: SPACING.base,
     marginTop: SPACING.lg,
-    backgroundColor: COLORS.infoLight,
-    borderColor: COLORS.info + '30',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: RADIUS.md,
+    padding: SPACING.base,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
-  infoContent: {
+  dataSourceHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: SPACING.md,
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
   },
-  infoText: {
-    flex: 1,
-  },
-  infoTitle: {
+  dataSourceTitle: {
     fontSize: FONTS.sizes.sm,
-    fontWeight: '600',
-    color: COLORS.info,
-    marginBottom: 4,
+    fontWeight: '700',
+    color: COLORS.white,
   },
-  infoDescription: {
+  dataSourceText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
-    lineHeight: 18,
+    color: COLORS.mediumGray,
+    lineHeight: 19,
   },
   footer: {
     height: SPACING.xxxl,

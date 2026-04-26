@@ -9,6 +9,8 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
+  Modal,
   LayoutChangeEvent,
   useWindowDimensions,
 } from 'react-native';
@@ -73,7 +75,11 @@ const METRICS: MetricConfig[] = [
       const remainingMonths = months % 12;
       return remainingMonths > 0 ? `${years}y ${remainingMonths}mo` : `${years}y`;
     },
-    getNumericValue: (city, analysis) => analysis?.breakEven.breakEvenMonths ?? Infinity,
+    getNumericValue: (city, analysis) => {
+      const months = analysis?.breakEven.breakEvenMonths ?? Infinity;
+      // Treat negative break-even (never) the same as Infinity
+      return months < 0 ? Infinity : months;
+    },
     higherIsBetter: false,
     icon: 'time-outline',
     showForCurrent: false,
@@ -190,6 +196,7 @@ export const MultiCitySummaryGrid: React.FC<MultiCitySummaryGridProps> = ({
 }) => {
   const { width: windowWidth } = useWindowDimensions();
   const [containerWidth, setContainerWidth] = useState(windowWidth - SPACING.base * 2);
+  const [showOverviewInfo, setShowOverviewInfo] = useState(false);
 
   // Build array of all cities for display
   const allCities = [
@@ -218,9 +225,100 @@ export const MultiCitySummaryGrid: React.FC<MultiCitySummaryGridProps> = ({
   return (
     <View style={styles.container} onLayout={handleLayout}>
       <View style={styles.header}>
-        <Ionicons name="grid-outline" size={18} color={COLORS.primary} />
-        <Text style={styles.headerTitle}>Compare All Cities</Text>
+        <View style={styles.headerLeft}>
+          <Ionicons name="grid-outline" size={18} color={COLORS.primary} />
+          <Text style={styles.headerTitle}>Compare All Cities</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => setShowOverviewInfo(true)}
+          style={styles.headerInfoButton}
+        >
+          <Ionicons name="information-circle-outline" size={22} color={COLORS.primary} />
+        </TouchableOpacity>
       </View>
+
+      {/* Overview Info Modal */}
+      <Modal
+        visible={showOverviewInfo}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowOverviewInfo(false)}
+      >
+        <View style={styles.infoModalOverlay}>
+          <View style={styles.infoModalContent}>
+            <View style={styles.infoModalHeader}>
+              <Text style={styles.infoModalTitle}>Understanding the Overview</Text>
+              <TouchableOpacity
+                onPress={() => setShowOverviewInfo(false)}
+                style={styles.infoModalClose}
+              >
+                <Ionicons name="close" size={24} color={COLORS.mediumGray} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.infoModalBody}>
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="grid-outline" size={20} color={COLORS.primary} />
+                  <Text style={styles.infoSectionTitle}>Compare All Cities</Text>
+                </View>
+                <Text style={styles.infoSectionText}>
+                  This grid shows key financial metrics side by side for your current city and all target cities. Green highlighted values indicate the best option for each metric.
+                </Text>
+              </View>
+
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="list-outline" size={20} color={COLORS.info} />
+                  <Text style={styles.infoSectionTitle}>What Each Metric Means</Text>
+                </View>
+                <View style={styles.infoList}>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Break-Even:</Text> How long until the financial benefits of moving offset the costs. Shorter is better.</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>5yr Net Worth:</Text> Projected total net worth after 5 years, including savings, investments, and home equity if buying. Higher is better.</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Net Salary:</Text> Your take-home pay after federal, state, and local taxes. Higher is better.</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>COL Index:</Text> Cost of living index relative to the national average (100). Lower means your money goes further.</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Median Rent:</Text> Typical monthly rent in that city. Lower is better for affordability.</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Tax Rate:</Text> Your effective combined tax rate in that location. Lower means you keep more of your salary.</Text>
+                </View>
+              </View>
+
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="analytics-outline" size={20} color={COLORS.success} />
+                  <Text style={styles.infoSectionTitle}>The Detail Cards</Text>
+                </View>
+                <Text style={styles.infoSectionText}>
+                  Below the comparison grid, you'll find a detailed breakdown for the selected city including the break-even timeline, salary comparison, and key financial highlights. Use the city selector to switch between target cities.
+                </Text>
+              </View>
+
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="bulb-outline" size={20} color={COLORS.warning} />
+                  <Text style={styles.infoSectionTitle}>How to Use This</Text>
+                </View>
+                <Text style={styles.infoSectionText}>
+                  Start with the comparison grid to identify which city looks strongest overall. Then use the other tabs — Projections, Housing, Negotiate, and Checklist — to dive deeper into the details for your top choice.
+                </Text>
+              </View>
+
+              <View style={styles.infoNote}>
+                <Ionicons name="information-circle" size={18} color={COLORS.info} />
+                <Text style={styles.infoNoteText}>
+                  All calculations are based on the salary, moving costs, and household details you entered. Adjust your inputs to see how different scenarios affect the comparison.
+                </Text>
+              </View>
+            </ScrollView>
+
+            <TouchableOpacity
+              onPress={() => setShowOverviewInfo(false)}
+              style={styles.infoModalButton}
+            >
+              <Text style={styles.infoModalButtonText}>Got It</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <ScrollView
         horizontal
@@ -353,7 +451,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm,
+    justifyContent: 'space-between',
     padding: SPACING.md,
     backgroundColor: COLORS.offWhite,
     borderBottomWidth: 1,
@@ -362,7 +460,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   scrollContent: {
     paddingHorizontal: SPACING.md,
@@ -388,7 +486,7 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '600',
     flex: 1,
   },
@@ -404,7 +502,7 @@ const styles = StyleSheet.create({
   cityName: {
     fontSize: FONTS.sizes.base,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     textAlign: 'center',
   },
   currentBadge: {
@@ -440,7 +538,7 @@ const styles = StyleSheet.create({
   },
   valueText: {
     fontSize: FONTS.sizes.base,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -467,6 +565,111 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: FONTS.sizes.sm,
     color: COLORS.mediumGray,
+  },
+
+  // Header layout
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  headerInfoButton: {
+    padding: SPACING.xs,
+  },
+
+  // Info Modal
+  infoModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.lg,
+  },
+  infoModalContent: {
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.lg,
+    width: '100%',
+    maxWidth: 500,
+    maxHeight: '80%',
+    ...SHADOWS.large,
+  },
+  infoModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: SPACING.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.lightGray,
+  },
+  infoModalTitle: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: '700',
+    color: COLORS.white,
+  },
+  infoModalClose: {
+    padding: SPACING.xs,
+  },
+  infoModalBody: {
+    padding: SPACING.lg,
+  },
+  infoSection: {
+    marginBottom: SPACING.lg,
+  },
+  infoSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
+  },
+  infoSectionTitle: {
+    fontSize: FONTS.sizes.base,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  infoSectionText: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+    lineHeight: 20,
+  },
+  infoList: {
+    gap: SPACING.sm,
+  },
+  infoListItem: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+    lineHeight: 20,
+  },
+  infoListBold: {
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  infoNote: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: SPACING.sm,
+    backgroundColor: COLORS.offWhite,
+    padding: SPACING.md,
+    borderRadius: RADIUS.sm,
+    marginTop: SPACING.sm,
+  },
+  infoNoteText: {
+    flex: 1,
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.mediumGray,
+    lineHeight: 18,
+  },
+  infoModalButton: {
+    backgroundColor: COLORS.primary,
+    margin: SPACING.lg,
+    marginTop: 0,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.sm,
+    alignItems: 'center',
+  },
+  infoModalButtonText: {
+    fontSize: FONTS.sizes.base,
+    fontWeight: '600',
+    color: COLORS.white,
   },
 });
 

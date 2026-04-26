@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   tabsContainer: {
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '500',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   tabTextSelected: {
     color: COLORS.white,

@@ -342,7 +342,7 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
   const handleUseThisAmount = () => {
     if (fromFullAnalysis && returnToCityId) {
       navigation.navigate('FullAnalysis', {
-        returnedMovingCost: displayTotal,
+        returnedMovingCost: Math.round(displayTotal),
         forCityId: returnToCityId,
       });
     }
@@ -635,7 +635,7 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
             <View style={styles.switchGroup}>
               <View style={styles.switchRow}>
                 <View style={styles.switchLabel}>
-                  <Ionicons name="car-outline" size={20} color={COLORS.darkGray} />
+                  <Ionicons name="car-outline" size={20} color={COLORS.mediumGray} />
                   <Text style={styles.switchText}>Shipping a vehicle?</Text>
                 </View>
                 <Switch
@@ -648,7 +648,7 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
 
               <View style={styles.switchRow}>
                 <View style={styles.switchLabel}>
-                  <Ionicons name="paw-outline" size={20} color={COLORS.darkGray} />
+                  <Ionicons name="paw-outline" size={20} color={COLORS.mediumGray} />
                   <Text style={styles.switchText}>Moving with pets?</Text>
                 </View>
                 <Switch
@@ -661,7 +661,7 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
 
               <View style={styles.switchRow}>
                 <View style={styles.switchLabel}>
-                  <Ionicons name="home-outline" size={20} color={COLORS.darkGray} />
+                  <Ionicons name="home-outline" size={20} color={COLORS.mediumGray} />
                   <Text style={styles.switchText}>Renting your new home?</Text>
                 </View>
                 <Switch
@@ -674,7 +674,7 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
 
               <View style={styles.switchRow}>
                 <View style={styles.switchLabel}>
-                  <Ionicons name="briefcase-outline" size={20} color={COLORS.darkGray} />
+                  <Ionicons name="briefcase-outline" size={20} color={COLORS.mediumGray} />
                   <Text style={styles.switchText}>Employer relocation assistance?</Text>
                 </View>
                 <Switch
@@ -729,7 +729,7 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
                   </View>
                 </View>
                 <Pressable onPress={dismissDisclaimer} style={styles.disclaimerCloseButton}>
-                  <Ionicons name="close" size={20} color={COLORS.darkGray} />
+                  <Ionicons name="close" size={20} color={COLORS.mediumGray} />
                 </Pressable>
               </View>
             )}
@@ -1049,10 +1049,11 @@ export const MovingEstimatorScreen: React.FC<MovingEstimatorScreenProps> = ({ na
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.primaryDark,
   },
   scrollView: {
     flex: 1,
+    backgroundColor: COLORS.primaryDark,
     paddingHorizontal: SPACING.base,
     paddingTop: SPACING.base,
   },
@@ -1082,12 +1083,12 @@ const styles = StyleSheet.create({
   disclaimerTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: SPACING.xs,
   },
   disclaimerText: {
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 18,
   },
   disclaimerCloseButton: {
@@ -1103,7 +1104,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   switchGroup: {
@@ -1126,7 +1127,7 @@ const styles = StyleSheet.create({
   },
   switchText: {
     fontSize: FONTS.sizes.base,
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   methodInfoCard: {
     backgroundColor: COLORS.infoLight,
@@ -1149,7 +1150,7 @@ const styles = StyleSheet.create({
   },
   methodInfoDescription: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
     marginBottom: SPACING.md,
   },
@@ -1163,7 +1164,7 @@ const styles = StyleSheet.create({
   methodInfoLabel: {
     fontSize: FONTS.sizes.xs,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: SPACING.xs,
@@ -1177,7 +1178,7 @@ const styles = StyleSheet.create({
   methodInfoText: {
     flex: 1,
     fontSize: FONTS.sizes.xs,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 16,
   },
   calculateButton: {
@@ -1350,7 +1351,7 @@ const styles = StyleSheet.create({
   },
   expenseDescription: {
     fontSize: FONTS.sizes.base,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     fontWeight: '500',
   },
   expenseCategory: {
@@ -1361,7 +1362,7 @@ const styles = StyleSheet.create({
   expenseAmount: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   expenseAmountOptional: {
     fontSize: FONTS.sizes.base,
@@ -1378,12 +1379,12 @@ const styles = StyleSheet.create({
   subtotalLabel: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   subtotalValue: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   tipsCard: {
     backgroundColor: COLORS.warningLight,
@@ -1399,14 +1400,14 @@ const styles = StyleSheet.create({
   tipsTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   tipsList: {
     gap: SPACING.sm,
   },
   tip: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
   },
   footer: {
@@ -1450,7 +1451,7 @@ const styles = StyleSheet.create({
   },
   distanceText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   // Validation Banners
@@ -1501,11 +1502,11 @@ const styles = StyleSheet.create({
   },
   timelineText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   timelineBold: {
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   // Timeline Warning Banner
   timelineWarning: {
@@ -1525,7 +1526,7 @@ const styles = StyleSheet.create({
   timelineWarningTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: SPACING.xs,
   },
   timelineWarningText: {
@@ -1585,27 +1586,27 @@ const styles = StyleSheet.create({
   currentBadgeText: {
     fontSize: FONTS.sizes.xs,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.info,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   comparisonMethodName: {
     fontSize: FONTS.sizes.md,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: SPACING.xs,
   },
   comparisonMethodNameSelected: {
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   comparisonCost: {
     fontSize: FONTS.sizes.xl,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: SPACING.sm,
   },
   comparisonCostSelected: {
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   savingsContainer: {
     flexDirection: 'row',
@@ -1643,7 +1644,7 @@ const styles = StyleSheet.create({
   },
   comparisonDetailText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   selectButton: {
     marginTop: SPACING.md,

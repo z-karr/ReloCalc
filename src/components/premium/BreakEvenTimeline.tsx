@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   breakEvenBadge: {
     backgroundColor: COLORS.success,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   considerationsTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   considerationItem: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   considerationText: {
     flex: 1,
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     lineHeight: 18,
   },
 });

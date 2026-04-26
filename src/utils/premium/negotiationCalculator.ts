@@ -144,7 +144,8 @@ export function calculateNegotiationToolkit(
     gap,
     currentCity,
     targetCity,
-    costFactors.moveClassification
+    costFactors.moveClassification,
+    opts.temporaryHousingDays
   );
 
   // Generate scripts
@@ -153,7 +154,10 @@ export function calculateNegotiationToolkit(
     currentCity,
     targetCity,
     currentSalary,
-    targetSalary
+    targetSalary,
+    costFactors.moveClassification,
+    opts.temporaryHousingDays,
+    opts.plansToBuy
   );
 
   return {
@@ -238,7 +242,7 @@ function calculateRelocationCosts(
   const annualTaxImpact = targetSalary * taxBurdenDifference;
 
   // Gross-up calculation (relocation benefits are taxable)
-  // Estimate ~30% marginal tax rate on relocation benefits
+  // Estimate ~35% marginal tax rate on relocation benefits
   const taxableRelocationBenefits = movingExpenses + temporaryHousing + houseHuntingTrips;
   const grossUpAmount = taxableRelocationBenefits * 0.35;
 
@@ -314,7 +318,8 @@ function generateNegotiationPoints(
   gap: number,
   currentCity: City,
   targetCity: City,
-  moveClassification?: MoveClassification
+  moveClassification?: MoveClassification,
+  temporaryHousingDays?: number
 ): string[] {
   const points: string[] = [];
 
@@ -326,19 +331,47 @@ function generateNegotiationPoints(
     ? ` (${formatDistance(moveClassification.distanceMiles)})`
     : '';
 
+  // Move type/distance point — sets the stage for why costs are what they are
+  if (moveClassification) {
+    const moveType = moveClassification.type;
+    const distance = moveClassification.distanceMiles;
+    if (moveType === 'international') {
+      points.push(
+        `This is an international relocation${distanceText}, which typically involves the most comprehensive packages due to cross-border logistics, visa support, and extended transition timelines.`
+      );
+    } else if (moveType === 'cross-country') {
+      points.push(
+        `This is a cross-country move spanning ${formatDistance(distance)}, placing it in the highest tier of domestic relocations. Industry data shows cross-country moves cost 2-3x more than regional moves due to longer transit, extended temporary housing, and higher travel costs.`
+      );
+    } else if (moveType === 'long-distance') {
+      points.push(
+        `At ${formatDistance(distance)}, this qualifies as a long-distance relocation. Moves of this distance typically require professional movers, temporary housing, and multiple house hunting trips — all standard components of a comprehensive relocation package.`
+      );
+    } else if (moveType === 'regional') {
+      points.push(
+        `This is a regional move of ${formatDistance(distance)}. While shorter than cross-country moves, the distance still requires professional movers and a transition period for housing, making relocation support appropriate.`
+      );
+    } else {
+      points.push(
+        `This is a local move of ${formatDistance(distance)}. While the distance is manageable, professional moving services and a brief transition period are still standard relocation support items.`
+      );
+    }
+  }
+
   // Moving costs point
   points.push(
     `Moving costs alone are estimated at $${costs.movingExpenses.toLocaleString()}, which is within industry norms for a ${moveTypeLabel}${distanceText}.`
   );
 
-  // Temporary housing point
-  if (costs.temporaryHousing > 3000) {
+  // Temporary housing point — use actual days for daily rate
+  if (costs.temporaryHousing > 3000 && temporaryHousingDays && temporaryHousingDays > 0) {
+    const dailyRate = Math.round(costs.temporaryHousing / temporaryHousingDays);
     const typicalDays = moveClassification?.type === 'cross-country' ? '60-90'
       : moveClassification?.type === 'long-distance' ? '45-60'
       : moveClassification?.type === 'regional' ? '30-45'
       : '14-30';
     points.push(
-      `Temporary housing in ${targetCity.name} runs approximately $${Math.round(costs.temporaryHousing / 45)}/day. A ${typicalDays} day allowance is standard for a ${moveTypeLabel}.`
+      `Temporary housing in ${targetCity.name} runs approximately $${dailyRate}/day. A ${typicalDays} day allowance is standard for a ${moveTypeLabel}.`
     );
   }
 
@@ -380,18 +413,49 @@ function generateNegotiationScripts(
   currentCity: City,
   targetCity: City,
   currentSalary: number,
-  targetSalary: number
+  targetSalary: number,
+  moveClassification?: MoveClassification,
+  temporaryHousingDays?: number,
+  plansToBuy?: boolean
 ): NegotiationToolkit['scripts'] {
   const colDiff = ((targetCity.costOfLivingIndex / currentCity.costOfLivingIndex) - 1) * 100;
 
+  // COL script adapts based on whether target is more or less expensive
+  let colScript: string;
+  if (colDiff > 0 && costs.colAdjustmentNeeded > 0) {
+    colScript = `"I'm excited about this opportunity in ${targetCity.name}. I've done research on the cost of living difference between ${currentCity.name} and ${targetCity.name}, which shows approximately a ${colDiff.toFixed(0)}% increase. To maintain my current standard of living and purchasing power, I'd like to discuss a cost of living adjustment of $${Math.round(costs.colAdjustmentNeeded).toLocaleString()} annually, or a one-time relocation bonus to offset this difference."`;
+  } else {
+    colScript = `"I'm excited about this opportunity in ${targetCity.name}. While the cost of living is comparable to or lower than ${currentCity.name}, the relocation itself involves significant one-time expenses. I'd like to discuss a relocation bonus to cover the transition costs and ensure I can hit the ground running in the new role."`;
+  }
+
+  // Temp housing script uses actual days based on move type
+  const tempDaysRange = moveClassification?.type === 'cross-country' ? '60-90'
+    : moveClassification?.type === 'long-distance' ? '45-60'
+    : moveClassification?.type === 'international' ? '60-90'
+    : moveClassification?.type === 'regional' ? '30-45'
+    : '14-30';
+  const housingContext = plansToBuy
+    ? 'especially when purchasing a home, which involves inspections, appraisals, and closing'
+    : 'especially for someone new to the area';
+
+  const tempHousingScript = `"Finding suitable housing in ${targetCity.name} typically takes ${tempDaysRange} days, ${housingContext}. I'd like to request temporary housing support during this transition period. Based on local rates, this would be approximately $${costs.temporaryHousing.toLocaleString()}. This allows me to start contributing to the team immediately while securing appropriate permanent housing."`;
+
+  // Home sale script adapts based on whether user is a buyer/homeowner
+  let homeSaleScript: string;
+  if (plansToBuy) {
+    homeSaleScript = `"As I'll be purchasing a home in ${targetCity.name}, I'd like to discuss closing cost assistance and any home buying programs your company offers. Covering closing costs — typically 2-3% of the purchase price — is a standard component of relocation packages and helps reduce the financial complexity of the transition."`;
+  } else {
+    homeSaleScript = `"I'd like to discuss support for the housing transition, including lease break costs at my current residence and security deposit assistance in ${targetCity.name}. These one-time costs are a standard component of relocation support and help ensure a smooth transition."`;
+  }
+
   return {
-    colAdjustment: `"I'm excited about this opportunity in ${targetCity.name}. I've done research on the cost of living difference between ${currentCity.name} and ${targetCity.name}, which shows approximately a ${colDiff.toFixed(0)}% increase. To maintain my current standard of living and purchasing power, I'd like to discuss a cost of living adjustment of $${Math.round(costs.colAdjustmentNeeded).toLocaleString()} annually, or a one-time relocation bonus to offset this difference."`,
+    colAdjustment: colScript,
 
     grossUp: `"I understand that relocation benefits are considered taxable income. To ensure I receive the full value of the relocation package, I'd like to request a tax gross-up provision. Based on my estimated marginal tax rate, this would be approximately $${costs.grossUpAmount.toLocaleString()}. This is a standard practice at many companies and ensures the relocation support achieves its intended purpose."`,
 
-    temporaryHousing: `"Finding suitable housing in ${targetCity.name} typically takes 45-60 days, especially for someone new to the area. I'd like to request temporary housing support during this transition period. Based on local rates, this would be approximately $${costs.temporaryHousing.toLocaleString()}. This allows me to start contributing to the team immediately while securing appropriate permanent housing."`,
+    temporaryHousing: tempHousingScript,
 
-    homeSaleAssistance: `"As a current homeowner in ${currentCity.name}, the relocation timeline creates some complexity. I'd like to discuss home sale assistance options, such as a guaranteed buyout program or closing cost coverage. This removes uncertainty from the relocation process and allows me to focus fully on the new role from day one."`,
+    homeSaleAssistance: homeSaleScript,
   };
 }
 

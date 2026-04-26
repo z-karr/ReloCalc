@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   cityName: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   cityLocation: {
     fontSize: FONTS.sizes.sm,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   scoreBarLabelText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   scoreValue: {
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   highlightsTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   highlightItem: {
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   },
   highlightText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     flex: 1,
   },
   // Compact styles
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   compactCityName: {
     fontSize: FONTS.sizes.base,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   rankBadge: {
     backgroundColor: COLORS.primary,

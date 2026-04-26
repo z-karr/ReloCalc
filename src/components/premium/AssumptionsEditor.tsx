@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   changedBadge: {
     backgroundColor: COLORS.warningLight,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.info,
     marginBottom: SPACING.sm,
   },
   sliderRow: {
@@ -349,12 +349,12 @@ const styles = StyleSheet.create({
   sliderLabel: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   sliderValue: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   sliderDescription: {
     fontSize: FONTS.sizes.xs,
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   },
   resetText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.primary,
+    color: COLORS.info,
     fontWeight: '600',
   },
   disclaimer: {

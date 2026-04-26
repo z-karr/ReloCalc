@@ -8,6 +8,7 @@ import {
   TextInput,
   Platform,
   Animated,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../../theme';
@@ -27,6 +28,8 @@ import {
 interface ChecklistSectionProps {
   checklist: MovingChecklist;
   onChecklistUpdate: (checklist: MovingChecklist) => void;
+  showInfo?: boolean;
+  onCloseInfo?: () => void;
 }
 
 interface TaskItemProps {
@@ -169,11 +172,17 @@ const PhaseProgress: React.FC<PhaseProgressProps> = ({
 export const ChecklistSection: React.FC<ChecklistSectionProps> = ({
   checklist,
   onChecklistUpdate,
+  showInfo,
+  onCloseInfo,
 }) => {
   const [activePhase, setActivePhase] = useState<string | 'all' | 'overdue' | 'upcoming'>(
     checklist.currentPhase
   );
   const [showAddTask, setShowAddTask] = useState(false);
+  const showChecklistInfo = showInfo ?? false;
+  const setShowChecklistInfo = (val: boolean) => {
+    if (!val && onCloseInfo) onCloseInfo();
+  };
   const [newTaskText, setNewTaskText] = useState('');
   const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set([checklist.currentPhase]));
 
@@ -247,6 +256,88 @@ export const ChecklistSection: React.FC<ChecklistSectionProps> = ({
           {checklist.fromCity.name} → {checklist.toCity.name}
         </Text>
       </View>
+
+      {/* Checklist Info Modal */}
+      <Modal
+        visible={showChecklistInfo}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowChecklistInfo(false)}
+      >
+        <View style={styles.infoModalOverlay}>
+          <View style={styles.infoModalContent}>
+            <View style={styles.infoModalHeader}>
+              <Text style={styles.infoModalTitle}>About Your Checklist</Text>
+              <TouchableOpacity
+                onPress={() => setShowChecklistInfo(false)}
+                style={styles.infoModalClose}
+              >
+                <Ionicons name="close" size={24} color={COLORS.mediumGray} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.infoModalBody}>
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="checkbox-outline" size={20} color={COLORS.primary} />
+                  <Text style={styles.infoSectionTitle}>What This Is</Text>
+                </View>
+                <Text style={styles.infoSectionText}>
+                  A personalized moving checklist tailored to your specific move. Tasks are filtered based on your circumstances — whether you have pets, children, are renting or own a home, and whether this is a domestic or international move.
+                </Text>
+              </View>
+
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="time-outline" size={20} color={COLORS.info} />
+                  <Text style={styles.infoSectionTitle}>The 5 Phases</Text>
+                </View>
+                <View style={styles.infoList}>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Planning (90-60 days):</Text> Research, budgeting, and major decisions</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Preparation (60-30 days):</Text> Booking services, packing, and paperwork</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Execution (30-7 days):</Text> Address changes, utilities, and final packing</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Countdown (7-0 days):</Text> Last-minute tasks and moving day</Text>
+                  <Text style={styles.infoListItem}>• <Text style={styles.infoListBold}>Settling In (after move):</Text> Unpacking, registration, and getting established</Text>
+                </View>
+              </View>
+
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="alert-circle-outline" size={20} color={COLORS.error} />
+                  <Text style={styles.infoSectionTitle}>Overdue & Upcoming</Text>
+                </View>
+                <Text style={styles.infoSectionText}>
+                  Tasks are marked overdue if their recommended timing has passed. Use the "Overdue" and "Upcoming" filters to focus on what needs attention now. Don't worry if some tasks are overdue — they're guidelines, not deadlines.
+                </Text>
+              </View>
+
+              <View style={styles.infoSection}>
+                <View style={styles.infoSectionHeader}>
+                  <Ionicons name="create-outline" size={20} color={COLORS.success} />
+                  <Text style={styles.infoSectionTitle}>Customize It</Text>
+                </View>
+                <Text style={styles.infoSectionText}>
+                  Tap any task to mark it complete. You can also add your own custom tasks using the "Add Task" button. Your progress is tracked across all phases so you can see how far along you are at a glance.
+                </Text>
+              </View>
+
+              <View style={styles.infoNote}>
+                <Ionicons name="information-circle" size={18} color={COLORS.info} />
+                <Text style={styles.infoNoteText}>
+                  If you're comparing multiple cities, switch between them using the city selector above. Each city gets its own checklist since timelines and tasks may differ.
+                </Text>
+              </View>
+            </ScrollView>
+
+            <TouchableOpacity
+              onPress={() => setShowChecklistInfo(false)}
+              style={styles.infoModalButton}
+            >
+              <Text style={styles.infoModalButtonText}>Got It</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Overall Progress */}
       <View style={styles.overallProgress}>
@@ -482,7 +573,7 @@ const styles = StyleSheet.create({
   progressPercent: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   progressLabel: {
     fontSize: FONTS.sizes.xs,
@@ -505,7 +596,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   statLabel: {
     fontSize: FONTS.sizes.xs,
@@ -519,7 +610,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '700',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.md,
   },
   phaseProgress: {
@@ -553,12 +644,12 @@ const styles = StyleSheet.create({
   },
   phaseLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   phaseCount: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   phaseBar: {
     height: 4,
@@ -604,7 +695,7 @@ const styles = StyleSheet.create({
   },
   filterTabText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   filterTabTextActive: {
@@ -655,7 +746,7 @@ const styles = StyleSheet.create({
   },
   taskText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: 4,
   },
   taskTextCompleted: {
@@ -711,7 +802,7 @@ const styles = StyleSheet.create({
   },
   addTaskButtonText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.primary,
+    color: COLORS.info,
     fontWeight: '600',
   },
   addTaskForm: {
@@ -727,7 +818,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     fontSize: FONTS.sizes.base,
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: SPACING.md,
   },
   addTaskActions: {
@@ -759,6 +850,104 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.sm,
     color: COLORS.white,
     fontWeight: '600',
+  },
+
+  // Info Modal
+  headerInfoButton: {
+    padding: 2,
+  },
+  infoModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.lg,
+  },
+  infoModalContent: {
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.lg,
+    width: '100%',
+    maxWidth: 500,
+    maxHeight: '80%',
+    ...SHADOWS.large,
+  },
+  infoModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: SPACING.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.lightGray,
+  },
+  infoModalTitle: {
+    fontSize: FONTS.sizes.lg,
+    fontWeight: '700',
+    color: COLORS.white,
+  },
+  infoModalClose: {
+    padding: SPACING.xs,
+  },
+  infoModalBody: {
+    padding: SPACING.lg,
+  },
+  infoSection: {
+    marginBottom: SPACING.lg,
+  },
+  infoSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
+  },
+  infoSectionTitle: {
+    fontSize: FONTS.sizes.base,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  infoSectionText: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+    lineHeight: 20,
+  },
+  infoList: {
+    gap: SPACING.sm,
+  },
+  infoListItem: {
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.mediumGray,
+    lineHeight: 20,
+  },
+  infoListBold: {
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  infoNote: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: SPACING.sm,
+    backgroundColor: COLORS.offWhite,
+    padding: SPACING.md,
+    borderRadius: RADIUS.sm,
+    marginTop: SPACING.sm,
+  },
+  infoNoteText: {
+    flex: 1,
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.mediumGray,
+    lineHeight: 18,
+  },
+  infoModalButton: {
+    backgroundColor: COLORS.primary,
+    margin: SPACING.lg,
+    marginTop: 0,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.sm,
+    alignItems: 'center',
+  },
+  infoModalButtonText: {
+    fontSize: FONTS.sizes.base,
+    fontWeight: '600',
+    color: COLORS.white,
   },
 });
 

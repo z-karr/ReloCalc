@@ -1,6 +1,6 @@
 /**
  * Premium Feature Types
- * ReloCalc Premium: Full Analysis Feature
+ * ReloFi Premium: Full Analysis Feature
  */
 
 import { City } from './index';

@@ -258,18 +258,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   selector: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.white,
     borderRadius: RADIUS.md,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: COLORS.lightGray,
     ...(Platform.OS === 'web' && {
       cursor: 'pointer',
     }),

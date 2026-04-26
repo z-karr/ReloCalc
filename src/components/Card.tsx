@@ -5,7 +5,7 @@ import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
-  variant?: 'default' | 'elevated' | 'outlined';
+  variant?: 'default' | 'elevated' | 'outlined' | 'solid';
   onPress?: () => void;
 }
 
@@ -19,12 +19,13 @@ export const Card: React.FC<CardProps> = ({
     styles.card,
     variant === 'elevated' && styles.elevated,
     variant === 'outlined' && styles.outlined,
+    variant === 'solid' && styles.solid,
     style,
   ];
 
   if (onPress) {
     return (
-      <TouchableOpacity style={cardStyles} onPress={onPress} activeOpacity={0.9}>
+      <TouchableOpacity style={cardStyles} onPress={onPress} activeOpacity={0.92}>
         {children}
       </TouchableOpacity>
     );
@@ -104,27 +105,37 @@ export const Stat: React.FC<StatProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.09)',
     borderRadius: RADIUS.lg,
     padding: SPACING.base,
-    ...SHADOWS.md,
-    // Web-specific: use box-shadow for better rendering
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+    borderTopWidth: 2,
+    borderTopColor: COLORS.accent + '60',
     ...(Platform.OS === 'web' && {
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-    }),
+      backdropFilter: 'blur(8px)',
+    } as any),
   },
   elevated: {
-    ...SHADOWS.lg,
-    ...(Platform.OS === 'web' && {
-      boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-    }),
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderColor: 'rgba(255,255,255,0.16)',
+    borderTopColor: COLORS.accent + '80',
   },
   outlined: {
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: COLORS.lightGray,
-    shadowColor: 'transparent',
-    elevation: 0,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.08)',
+  },
+  // Solid white variant for when you need white cards (e.g., inside modals)
+  solid: {
+    backgroundColor: COLORS.white,
+    borderColor: COLORS.lightGray + '80',
+    ...SHADOWS.card,
+    ...(Platform.OS === 'web' && {
+      boxShadow: '0 1px 4px rgba(15,23,42,0.04), 0 1px 2px rgba(15,23,42,0.03)',
+    }),
   },
   header: {
     flexDirection: 'row',
@@ -141,12 +152,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginBottom: 2,
+    letterSpacing: -0.2,
   },
   subtitle: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   content: {
     // Default content styling
@@ -155,15 +167,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   statLabel: {
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    fontSize: FONTS.sizes.xs,
+    color: COLORS.mediumGray,
     marginBottom: 4,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+    fontWeight: '600',
   },
   statValue: {
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
+    letterSpacing: -0.3,
   },
   smValue: {
     fontSize: FONTS.sizes.md,
@@ -175,22 +189,22 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.xxl,
   },
   trend: {
-    marginTop: 4,
-    paddingVertical: 2,
-    paddingHorizontal: 8,
-    borderRadius: RADIUS.sm,
-    backgroundColor: COLORS.lightGray,
+    marginTop: 6,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    borderRadius: RADIUS.full,
+    backgroundColor: 'rgba(255,255,255,0.1)',
   },
   trendUp: {
-    backgroundColor: COLORS.successLight,
+    backgroundColor: COLORS.success + '25',
   },
   trendDown: {
-    backgroundColor: COLORS.errorLight,
+    backgroundColor: COLORS.error + '25',
   },
   trendText: {
     fontSize: FONTS.sizes.xs,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
   },
   trendTextUp: {
     color: COLORS.success,

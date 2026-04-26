@@ -450,7 +450,7 @@ export const CityComparisonScreen: React.FC<CityComparisonScreenProps> = ({ navi
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primaryDark,
   },
   scrollContainer: {
     flex: 1,
@@ -458,13 +458,18 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: COLORS.primaryDark,
   },
   selectorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: SPACING.base,
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    marginHorizontal: SPACING.base,
+    marginTop: SPACING.base,
     gap: SPACING.md,
   },
   citySelector: {
@@ -499,7 +504,7 @@ const styles = StyleSheet.create({
   cityHeaderName: {
     fontSize: FONTS.sizes.base,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   cityHeaderState: {
     fontSize: FONTS.sizes.sm,
@@ -519,7 +524,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONTS.sizes.md,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   metricRow: {
     marginBottom: SPACING.md,
@@ -532,7 +537,7 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '600',
   },
   metricValues: {
@@ -541,18 +546,21 @@ const styles = StyleSheet.create({
   },
   metricValueBox: {
     flex: 1,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.06)',
     padding: SPACING.md,
     borderRadius: RADIUS.sm,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   metricValueBetter: {
-    backgroundColor: COLORS.successLight,
+    backgroundColor: COLORS.success + '20',
+    borderColor: COLORS.success + '30',
   },
   metricValue: {
     fontSize: FONTS.sizes.base,
     fontWeight: '600',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   metricDifference: {
     alignItems: 'center',
@@ -571,8 +579,10 @@ const styles = StyleSheet.create({
   taxSummary: {
     marginTop: SPACING.md,
     padding: SPACING.md,
-    backgroundColor: COLORS.infoLight,
+    backgroundColor: COLORS.info + '15',
     borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.info + '25',
   },
   taxSummaryLabel: {
     fontSize: FONTS.sizes.sm,
@@ -592,24 +602,26 @@ const styles = StyleSheet.create({
   },
   taxInfoBox: {
     padding: SPACING.md,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   taxInfoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    borderBottomColor: 'rgba(255,255,255,0.08)',
   },
   taxInfoCity: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.white,
   },
   taxInfoType: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.primary,
+    color: COLORS.info,
     fontWeight: '500',
   },
   taxNote: {
@@ -630,13 +642,15 @@ const styles = StyleSheet.create({
   climateRow: {
     marginTop: SPACING.md,
     padding: SPACING.md,
-    backgroundColor: COLORS.offWhite,
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   climateLabel: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
     textAlign: 'center',
   },
@@ -657,9 +671,11 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   summaryCard: {
-    backgroundColor: COLORS.warningLight,
-    borderColor: COLORS.warning + '30',
+    backgroundColor: COLORS.warning + '12',
+    borderColor: COLORS.warning + '25',
     borderWidth: 1,
+    borderTopWidth: 2,
+    borderTopColor: COLORS.warning + '60',
   },
   summaryHeader: {
     flexDirection: 'row',
@@ -670,7 +686,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -678,17 +694,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.warning + '20',
+    borderBottomColor: 'rgba(255,255,255,0.08)',
   },
   summaryLabel: {
     fontSize: FONTS.sizes.base,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   summaryValue: {
     fontSize: FONTS.sizes.base,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.info,
   },
   emptyState: {
     marginHorizontal: SPACING.base,
@@ -699,13 +715,13 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: FONTS.sizes.lg,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
     marginTop: SPACING.base,
     marginBottom: SPACING.sm,
   },
   emptyStateText: {
     fontSize: FONTS.sizes.base,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: SPACING.lg,

@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     fontWeight: '500',
   },
   currentBadge: {
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: FONTS.sizes.sm,
     fontWeight: '600',
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     marginBottom: SPACING.sm,
   },
   summaryGrid: {
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   summaryValue: {
     fontSize: FONTS.sizes.base,
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   breakEvenNote: {
     flexDirection: 'row',
@@ -559,12 +559,12 @@ const styles = StyleSheet.create({
   breakEvenNoteText: {
     flex: 1,
     fontSize: FONTS.sizes.sm,
-    color: COLORS.darkGray,
+    color: COLORS.mediumGray,
     lineHeight: 20,
   },
   breakEvenNoteHighlight: {
     fontWeight: '700',
-    color: COLORS.charcoal,
+    color: COLORS.white,
   },
   breakEvenNoteSubtext: {
     fontSize: FONTS.sizes.xs,
